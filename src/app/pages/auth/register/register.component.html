@@ -1,1 +1,135 @@
-<p>register works!</p>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="min-h-screen flex flex-col lg:flex-row font-['Barlow'] bg-white">
+
+  <!-- Sección de imagen (visible solo en desktop) -->
+  <div class="hidden lg:flex lg:w-2/3 bg-blue-50 items-center justify-center p-8">
+    <div class="w-full h-full flex items-center justify-center">
+      <img src="https://app.factiliza.com/assets/images/pages/forgot-password-v2.svg" 
+           alt="Registro de empresa"
+           class="w-auto h-full max-h-[800px] object-contain">
+    </div>
+  </div>
+
+  <!-- Sección de formulario -->
+  <div class="w-full lg:w-1/3 px-6 sm:px-10 py-8 sm:py-12 flex flex-col justify-center shadow-none lg:shadow-lg">
+    
+    <div class="text-center mb-8">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">{{ registroCompleto ? 'Registro Exitoso' : 'Registro de Usuario' }}</h2>
+      <p class="text-sm text-gray-500">{{ registroCompleto ? 'Tus datos han sido guardados correctamente' : 'Completa la información según tu caso' }}</p>
+    </div>
+
+    <div *ngIf="registroCompleto" class="text-center">
+      <div class="mb-6 p-4 bg-green-50 text-green-700 rounded-lg">
+        <p>¡Registro completado con éxito!</p>
+      </div>
+
+    </div>
+
+    <form *ngIf="!registroCompleto" class="space-y-5" (ngSubmit)="guardarRegistro()" #formRegistro="ngForm">
+
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">¿Tienes una empresa?</label>
+        <select [(ngModel)]="tieneEmpresa" name="tieneEmpresa"
+                class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+
+      <!-- Si tiene empresa -->
+      <div *ngIf="tieneEmpresa" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+            <input type="text" [(ngModel)]="datosRegistro.nombre" name="nombre" required
+                   class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
+            <input type="text" [(ngModel)]="datosRegistro.apellidos" name="apellidos" required
+                   class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+          <input type="email" [(ngModel)]="datosRegistro.correo" name="correo" required
+                 class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+          <input type="tel" [(ngModel)]="datosRegistro.telefono" name="telefono" required
+                 class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la empresa</label>
+          <input type="text" [(ngModel)]="datosRegistro.empresa" name="empresa" required
+                 class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Rubro o actividad</label>
+          <input type="text" [(ngModel)]="datosRegistro.rubro" name="rubro" required
+                 class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+        </div>
+      </div>
+
+
+      <div *ngIf="!tieneEmpresa" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+            <input type="text" [(ngModel)]="datosRegistro.nombre" name="nombre" required
+                   class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
+            <input type="text" [(ngModel)]="datosRegistro.apellidos" name="apellidos" required
+                   class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+          <input type="email" [(ngModel)]="datosRegistro.correo" name="correo" required
+                 class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+          <input type="tel" [(ngModel)]="datosRegistro.telefono" name="telefono" required
+                 class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Idea de negocio</label>
+          <textarea [(ngModel)]="datosRegistro.idea" name="idea" rows="3" required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        </div>
+      </div>
+      <div>
+  <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+  <input type="password" [(ngModel)]="datosRegistro.contrasena" name="contrasena" required
+         class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+</div>
+
+
+
+      <button type="submit"
+              class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition duration-300 mt-6">
+        Registrarme
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <p class="text-sm text-gray-600">
+        ¿Ya tienes una cuenta?
+        <a href="#" class="text-blue-600 font-semibold hover:underline ml-1">Iniciar sesión</a>
+      </p>
+    </div>
+  </div>
+</div>

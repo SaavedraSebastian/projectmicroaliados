@@ -1,0 +1,79 @@
+<div class="hidden lg:flex flex-col bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-80 h-[calc(100vh-4rem)] overflow-hidden">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-1">Mensajes Directos</h3>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Conversaciones recientes</p>
+    </div>
+    <button class="text-blue-600 dark:text-blue-400 text-sm font-medium hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-2 transition-colors">
+      Nuevo Mensaje
+      <span class="material-icons text-sm">add_circle</span>
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-4 relative">
+    <input type="text" placeholder="Buscar conversaciones..."
+      class="w-full px-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-500/20 transition-all">
+    <span class="material-icons absolute right-3 top-3 text-gray-400 dark:text-gray-500 text-sm">search</span>
+  </div>
+
+  <!-- Messages List -->
+  <div class="space-y-3 flex-1 overflow-y-auto pr-2">
+    <!-- Message Item -->
+    <div *ngFor="let message of messages(); let i = index" 
+         [class]="'flex items-center gap-3 p-3 rounded-lg border transition-all cursor-pointer ' + getBackgroundColor(message) + ' ' + getBorderColor(i)"
+         (click)="setActiveMessage(message.id)">
+      
+      <!-- Avatar with status -->
+      <div class="relative flex-shrink-0">
+        <img [src]="message.avatar" alt="Avatar of {{message.name}}" class="w-10 h-10 rounded-full">
+        <span *ngIf="message.status !== 'typing'" 
+              [class]="'absolute bottom-0 right-0 w-2.5 h-2.5 border-2 border-white dark:border-gray-700 rounded-full ' + getStatusColor(message.status)">
+        </span>
+        <span *ngIf="message.status === 'typing'" 
+              class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 border-2 border-white dark:border-gray-700 rounded-full animate-ping">
+        </span>
+      </div>
+      
+      <!-- Message Content -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between mb-1">
+          <h4 class="text-sm font-semibold text-gray-800 dark:text-white truncate">{{message.name}}</h4>
+          <span [class]="'text-xs ' + (message.isNew ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-gray-400')">
+            {{message.time}}
+          </span>
+        </div>
+        
+        <div *ngIf="message.status !== 'typing'" class="flex items-center justify-between">
+          <p class="text-xs text-gray-500 dark:text-gray-300 truncate">{{message.lastMessage}}</p>
+          <div class="flex items-center gap-1">
+            <span *ngIf="message.unread > 0" class="text-xs px-1.5 py-0.5 bg-blue-600 text-white rounded-full">
+              {{message.unread}}
+            </span>
+            <span *ngIf="message.hasAttachment" class="material-icons text-xs text-gray-400 dark:text-gray-500">attach_file</span>
+            <span *ngIf="message.isRead && message.unread === 0" class="material-icons text-xs text-green-500">done_all</span>
+          </div>
+        </div>
+        
+        <!-- Typing indicator -->
+        <div *ngIf="message.status === 'typing'" class="flex items-center gap-1">
+          <div class="typing-dot bg-gray-400 dark:bg-gray-500"></div>
+          <div class="typing-dot bg-gray-400 dark:bg-gray-500"></div>
+          <div class="typing-dot bg-gray-400 dark:bg-gray-500"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- New Message Input -->
+  <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+    <div class="flex items-center gap-2">
+      <input type="text" placeholder="Escribe un mensaje..." 
+             class="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-500/20 transition-all">
+      <button class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors">
+        <span class="material-icons text-sm">send</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+/* Estado activo del enlace */
+.active {
+  background: linear-gradient(to right, theme('colors.blue.600'), theme('colors.purple.600'));
+  box-shadow: theme('boxShadow.sm');
+  color: white !important;
+}
+
+.dark .active {
+  background: linear-gradient(to right, theme('colors.blue.500'), theme('colors.purple.500'));
+}
+
+/* Scroll minimalista */
+nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+nav::-webkit-scrollbar-thumb {
+  background-color: theme('colors.gray.300');
+  border-radius: theme('borderRadius.full');
+}
+
+.dark nav::-webkit-scrollbar-thumb {
+  background-color: theme('colors.gray.700');
+}
+
+/* Fuente general */
+.font-barlow {
+  font-family: 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif;
+}
