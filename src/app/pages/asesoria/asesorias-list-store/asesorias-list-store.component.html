@@ -1,0 +1,212 @@
+<div class="flex min-h-screen bg-gray-50/50" style="font-family:'Barlow', sans-serif;">
+    <app-sidebar-negocio></app-sidebar-negocio>
+    
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <app-navbar class="sticky top-0 z-10"></app-navbar>
+        
+        <!-- Contenedor principal ajustado para móviles -->
+        <div class="lg:ml-64 flex-1 p-4 sm:p-6 xl:p-8">
+            <!-- Encabezado responsive -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl xl:text-4xl font-semibold text-gray-900 tracking-tight">Asesorías Expertas</h1>
+                    <p class="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base xl:text-lg">Obtén orientación personalizada para hacer crecer tu negocio</p>
+                </div>
+                <div class="relative w-full md:w-72 lg:w-80 xl:w-96">
+                    <i class="fas fa-search absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
+                    <input type="text" 
+                           placeholder="Buscar asesorías..."
+                           [value]="searchQuery()"
+                           (input)="onSearchChange($event)"
+                           class="pl-10 sm:pl-12 pr-3 sm:pr-4 py-2 sm:py-2.5 w-full rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent text-gray-700 text-sm sm:text-base placeholder-gray-400 shadow-xs transition-all" />
+                </div>
+            </div>
+            
+            <!-- Filtros y categorías responsive -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div class="flex flex-wrap gap-2">
+                    @for (categoria of categorias(); track categoria) {
+                        <button 
+                            [class]="'px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-medium text-sm sm:text-base transition-all ' + 
+                                    (categoriaSeleccionada() === categoria ? 
+                                     'bg-gray-900 text-white shadow-sm' : 
+                                     'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200')"
+                            (click)="cambiarCategoria(categoria)">
+                            {{ categoria }}
+                        </button>
+                    }
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500 text-sm sm:text-base">Ordenar por:</span>
+                    <select 
+                        [value]="ordenSeleccionado()"
+                        (change)="cambiarOrden($any($event.target).value)"
+                        class="px-3 sm:px-4 py-1.5 rounded-lg border border-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm sm:text-base shadow-xs bg-white">
+                        @for (opcion of opcionesOrden(); track opcion) {
+                            <option [value]="opcion">{{ opcion }}</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Cards de métricas responsive -->
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 mb-6 sm:mb-8">
+                <div class="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-xs border border-gray-100">
+                    <div class="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <i class="fas fa-book text-blue-500 text-lg sm:text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs sm:text-sm">Cursos disponibles</p>
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-800">{{ asesoriasFiltradas().length }}</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-xs border border-gray-100">
+                    <div class="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-green-50 flex items-center justify-center">
+                            <i class="fas fa-chalkboard-teacher text-green-500 text-lg sm:text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs sm:text-sm">Instructores</p>
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-800">14</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-xs border border-gray-100">
+                    <div class="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-50 flex items-center justify-center">
+                            <i class="fas fa-users text-purple-500 text-lg sm:text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs sm:text-sm">Estudiantes activos</p>
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-800">1,250</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-xs border border-gray-100">
+                    <div class="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-amber-50 flex items-center justify-center">
+                            <i class="fas fa-star text-amber-500 text-lg sm:text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs sm:text-sm">Valoración promedio</p>
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-800">4.8<small class="text-sm font-normal text-gray-400">/5</small></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contenido principal responsive -->
+            <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+                <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Asesorías Disponibles</h2>
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <span class="text-gray-500 text-sm sm:text-base">{{ asesoriasFiltradas().length }} resultados</span>
+                    <button class="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-medium py-2 sm:py-2.5 px-4 sm:px-5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base flex items-center gap-2">
+                        <i class="fas fa-plus text-xs sm:text-sm"></i> Solicitar asesoría
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Grid de asesorías responsive -->
+            @if (asesoriasFiltradas().length > 0) {
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+                    @for (asesoria of asesoriasFiltradas(); track asesoria.id) {
+                        <div class="bg-white rounded-lg sm:rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-all duration-200 hover:border-gray-200">
+                            <div class="p-4 sm:p-5 lg:p-6">
+                                <!-- Header -->
+                                <div class="flex justify-between items-start mb-3 sm:mb-4">
+                                    <span [class]="'text-xs sm:text-sm font-medium px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ' + getColorCategoria(asesoria.categoria)">{{ asesoria.categoria }}</span>
+                                    <span class="text-xs sm:text-sm text-gray-400 flex items-center"><i class="fas fa-map-marker-alt mr-1 sm:mr-1.5 text-xs"></i>{{ asesoria.ubicacion }}</span>
+                                </div>
+                                
+                                <!-- Asesor info -->
+                                <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
+                                    <img class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-white shadow-xs" 
+                                         [src]="asesoria.foto" 
+                                         [alt]="'Asesor ' + asesoria.nombre">
+                                    <div>
+                                        <h2 class="text-base sm:text-lg font-semibold text-gray-800">{{ asesoria.nombre }}</h2>
+                                        <p class="text-gray-500 text-xs sm:text-sm">{{ asesoria.especialidad }}</p>
+                                        <div class="flex items-center mt-1">
+                                            <span class="text-yellow-400 mr-1"><i class="fas fa-star text-xs sm:text-sm"></i></span>
+                                            <span class="text-gray-700 font-medium text-xs sm:text-sm">{{ asesoria.valoracion }}</span>
+                                            <span class="text-gray-400 text-xs sm:text-sm ml-1">({{ asesoria.valoraciones }})</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Descripción -->
+                                <div class="mb-4 sm:mb-5">
+                                    <p class="text-gray-600 text-sm sm:text-base leading-snug line-clamp-2">"{{ asesoria.descripcion }}"</p>
+                                </div>
+                                
+                                <!-- Footer -->
+                                <div class="border-t border-gray-100 pt-4 sm:pt-5">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-3 sm:mb-4">
+                                        <div>
+                                            <h3 class="text-xs font-medium text-gray-500 mb-1 sm:mb-2">MODALIDADES</h3>
+                                            <div class="flex flex-wrap gap-1 sm:gap-2">
+                                                @for (modalidad of asesoria.modalidades; track modalidad) {
+                                                    <span class="bg-gray-50 text-gray-600 px-2 sm:px-3 py-0.5 sm:py-1 rounded-md text-xs sm:text-sm border border-gray-100">
+                                                        <i class="fas 
+                                                            {{ modalidad === 'Virtual' ? 'fa-video' : 
+                                                               modalidad === 'Presencial' ? 'fa-user' : 
+                                                               'fa-check' }} mr-1 sm:mr-1.5 text-xs"></i> 
+                                                        {{ modalidad }}
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="text-left sm:text-right">
+                                            <div class="text-lg sm:text-xl font-bold text-gray-800">${{ asesoria.precioHora }}<span class="text-xs sm:text-sm font-normal text-gray-400">/h</span></div>
+                                            <div class="text-xs sm:text-sm text-gray-400">Desde ${{ asesoria.paqueteDesde }}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        [class]="'w-full text-white bg-blue-900 font-medium py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg transition-all duration-200 text-sm sm:text-base flex items-center justify-center gap-1 sm:gap-2 ' + getGradientColor(asesoria.categoria)"
+                                        (click)="sidebarDetalle.open(asesoria)">
+                                        <i class="far fa-eye text-xs sm:text-sm"></i> Ver detalles
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <div class="bg-white p-6 sm:p-8 rounded-lg sm:rounded-xl shadow-xs border border-gray-100 text-center max-w-md mx-auto">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                        <i class="fas fa-search text-gray-300 text-xl sm:text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-medium text-gray-700 mb-1 sm:mb-2">No hay resultados</h3>
+                    <p class="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">Prueba ajustando tus filtros de búsqueda</p>
+                    <button (click)="cambiarCategoria('Todas'); searchQuery.set('')" 
+                            class="px-4 sm:px-5 py-2 sm:py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all text-sm sm:text-base font-medium shadow-sm">
+                        Mostrar todas
+                    </button>
+                </div>
+            }
+
+            <!-- Paginación responsive -->
+            <div class="mt-8 sm:mt-10 lg:mt-12 flex justify-center">
+                <nav class="flex items-center space-x-1 sm:space-x-2">
+                    <button class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-white text-gray-500 hover:bg-gray-50 border border-gray-200">
+                        <i class="fas fa-chevron-left text-xs sm:text-sm"></i>
+                    </button>
+                    <button class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-gray-900 text-white text-sm sm:text-base font-medium">1</button>
+                    <button class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-50 text-sm sm:text-base">2</button>
+                    <button class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-50 text-sm sm:text-base">3</button>
+                    <button class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-white text-gray-500 hover:bg-gray-50 border border-gray-200">
+                        <i class="fas fa-chevron-right text-xs sm:text-sm"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <app-side-bar-detalle-asesoria #sidebarDetalle></app-side-bar-detalle-asesoria>
+    </div>
+</div>

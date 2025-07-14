@@ -1,0 +1,12 @@
+/* Asegurar que los contenedores de gráficos tengan dimensiones adecuadas */
+canvas {
+  width: 100% !important;
+  min-height: 400px;
+}
+
+/* Estilo para los contenedores de los gráficos */
+.chart-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+}

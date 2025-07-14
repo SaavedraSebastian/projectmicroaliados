@@ -1,0 +1,83 @@
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="min-h-screen flex flex-col lg:flex-row font-['Barlow'] bg-white">
+  <!-- Sección de imagen (solo visible en desktop) -->
+  <div class="hidden lg:flex lg:w-2/3 bg-blue-50 items-center justify-center">
+    <div class="w-full h-full flex items-center justify-center p-8">
+      <img src="https://app.factiliza.com/assets/images/pages/login-v2.svg" 
+           alt="Startup Image" 
+           class="max-w-full max-h-[80vh] object-contain">
+    </div>
+  </div>
+  
+  <!-- Sección del formulario (siempre visible) -->
+  <div class="w-full lg:w-1/3 px-4 sm:px-6 md:px-10 lg:px-8 xl:px-12 py-6 sm:py-8 md:py-12 flex flex-col justify-center">
+    <!-- Logo -->
+    <div class="flex justify-center mb-4 sm:mb-6 md:mb-8">
+      <img src="https://i.postimg.cc/PrKb392x/Dise-o-sin-t-tulo-30-removebg-preview.png" 
+           alt="Micro Aliados Logo" 
+           class="h-12 sm:h-16 md:h-20 lg:h-24">
+    </div>
+
+    <!-- Título -->
+    <div class="text-center mb-4 sm:mb-6 md:mb-8">
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">Iniciar Sesión</h2>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-3 sm:space-y-4 md:space-y-5">
+      <!-- Email -->
+      <div>
+        <label class="block text-xs sm:text-sm md:text-base font-medium text-gray-700 mb-1">Correo electrónico</label>
+        <input formControlName="email" type="email" placeholder="usuario@correo.com"
+               class="w-full px-3 py-2 sm:px-4 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label class="block text-xs sm:text-sm md:text-base font-medium text-gray-700 mb-1">Contraseña</label>
+        <input formControlName="password" type="password" placeholder="********"
+               class="w-full px-3 py-2 sm:px-4 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="text-red-600 text-xs sm:text-sm text-center">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Forgot Password -->
+      <div class="text-right">
+        <a href="#" class="text-xs sm:text-sm md:text-base text-blue-600 hover:underline font-medium">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit"
+              [disabled]="loading"
+              class="w-full py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300">
+        {{ loading ? 'Cargando...' : 'Iniciar sesión' }}
+      </button>
+
+      <!-- Divider -->
+      <div class="flex items-center my-3 sm:my-4 md:my-5">
+        <div class="flex-grow border-t border-gray-300"></div>
+        <span class="mx-3 text-xs sm:text-sm text-gray-500">o</span>
+        <div class="flex-grow border-t border-gray-300"></div>
+      </div>
+
+      <!-- Google Button -->
+      <button type="button"
+              class="w-full py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base border border-gray-300 text-gray-700 font-medium rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-4 h-4 sm:w-5 sm:h-5" />
+        Continuar con Google
+      </button>
+    </form>
+
+    <!-- Register Link -->
+    <p class="text-center text-xs sm:text-sm md:text-base text-gray-600 mt-4 sm:mt-6 md:mt-8">
+      ¿No tienes una cuenta?
+      <a [routerLink]="'/register'" class="text-blue-600 font-semibold hover:underline ml-1">
+        Regístrate aquí
+      </a>
+    </p>
+  </div>
+</div>

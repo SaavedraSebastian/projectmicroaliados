@@ -1,0 +1,42 @@
+/* Estilos para las tarjetas de asesoría */
+.advisor-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.advisor-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Estilos para los badges de categoría */
+.badge {
+  @apply px-3 py-1 text-xs font-medium;
+}
+
+/* Efecto hover para los botones de modalidad */
+.bg-gray-100 {
+  transition: background-color 0.2s ease;
+}
+
+.bg-gray-100:hover {
+  @apply bg-gray-200;
+}
+
+/* Estilos para el mensaje de no resultados */
+.no-results {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilos para la paginación */
+nav button {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Asegurar que las imágenes mantengan su relación de aspecto */
+img {
+  object-fit: cover;
+}
