@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { SidebarNegocioComponent } from "../../../shared/components/sidebar-negocio/sidebar-negocio.component";
 import { NavbarComponent } from "../../../shared/components/navbar/navbar.component";
 import { Chart, registerables } from 'chart.js';
@@ -10,9 +10,10 @@ import { Router } from '@angular/router';
 import { SortByPipe } from '../../../core/pipes/sort-by.pipe';
 import { User } from '../../../shared/models/user.model';
 
+// Registrar todos los componentes de Chart.js
+Chart.register(...registerables);
 
-
-
+// Interfaces
 interface UserData {
   name: string;
   plan: string;
@@ -66,8 +67,8 @@ interface Training {
   date: string;
   duration: string;
   confirmed?: boolean;
-  type:string;
-  time:string;
+  type: string;
+  time: string;
 }
 
 interface Speaker {
@@ -75,10 +76,9 @@ interface Speaker {
   name: string;
   expertise: string;
   rating: number;
-  color:string;
+  color: string;
   initials: string;
-  specialty:string;
-
+  specialty: string;
 }
 
 interface Activity {
@@ -87,7 +87,7 @@ interface Activity {
   date: string;
   type: string;
   confirmed?: boolean;
-  time:string;
+  time: string;
 }
 
 interface ChartData {
@@ -109,25 +109,24 @@ interface FilteredData {
   activities: Activity[];
 }
 
-Chart.register(...registerables);
-
+// Servicios mock
 class MockAuthService {
   getCurrentUser(): User {
     return { 
-       nombre: 'Usuario',
-    apellidos: 'Ejemplo',
-    correo: 'usuario@ejemplo.com',
-    empresa: 'Empresa Ficticia SAC',
-    rubro: 'Emprendedor',
-    telefono: '999999999',
-    fullName: 'Usuario Ejemplo',
+      nombre: 'Usuario',
+      apellidos: 'Ejemplo',
+      correo: 'usuario@ejemplo.com',
+      empresa: 'Empresa Ficticia SAC',
+      rubro: 'Emprendedor',
+      telefono: '999999999',
+      fullName: 'Usuario Ejemplo',
       profileProgress: 75,
-    plan: 'Plan Premium'
+      plan: 'Plan Premium'
     };
   }
 
   logout() {
-
+    console.log('Logged out');
   }
 }
 
@@ -164,7 +163,7 @@ class MockReportesService {
     return of({
       name: 'Mi Negocio Ejemplo',
       industry: 'Tecnología',
-      startDate: new Date(2023, 0, 15),
+      startDate: new Date(2025, 1, 15),
       status: 'Activo',
       nextGoal: 'Expandir a nuevos mercados'
     });
@@ -188,7 +187,7 @@ class MockReportesService {
         id: 1,
         name: 'Lanzamiento inicial',
         status: 'completed',
-        completionDate: new Date(2023, 2, 15),
+        completionDate: new Date(2025, 4, 15),
         progress: 100,
         type: 'Producto',
         details: 'Primera versión del producto',
@@ -198,7 +197,7 @@ class MockReportesService {
         id: 2,
         name: 'Primeros 100 clientes',
         status: 'completed',
-        completionDate: new Date(2023, 4, 20),
+        completionDate: new Date(2025, 7, 20),
         progress: 100,
         type: 'Ventas',
         details: 'Alcanzar primeros 100 clientes pagos',
@@ -231,8 +230,8 @@ class MockReportesService {
         id: 1,
         title: 'Marketing Digital Básico',
         instructor: 'Ana López',
-        startDate: '2023-01-10',
-        endDate: '2023-02-15',
+        startDate: '2025-01-10',
+        endDate: '2025-02-15',
         duration: '5 semanas',
         progress: 100,
         status: 'completed',
@@ -242,8 +241,8 @@ class MockReportesService {
         id: 2,
         title: 'Finanzas para Emprendedores',
         instructor: 'Carlos Méndez',
-        startDate: '2023-03-01',
-        endDate: '2023-04-10',
+        startDate: '2025-03-01',
+        endDate: '2025-04-10',
         duration: '6 semanas',
         progress: 100,
         status: 'completed',
@@ -253,8 +252,8 @@ class MockReportesService {
         id: 3,
         title: 'Diseño UX/UI',
         instructor: 'María González',
-        startDate: '2023-05-15',
-        endDate: '2023-07-20',
+        startDate: '2025-05-15',
+        endDate: '2025-07-20',
         duration: '9 semanas',
         progress: 75,
         status: 'in-progress',
@@ -278,7 +277,7 @@ class MockReportesService {
         id: 2,
         title: 'Seminario de Tributación',
         date: '2025-07-20',
-          time: '10:00 AM',
+        time: '10:00 AM',
         duration: '2 horas',
         confirmed: false,
         type: 'seminario'
@@ -293,9 +292,9 @@ class MockReportesService {
         name: 'Roberto Sánchez',
         expertise: 'Marketing Digital',
         rating: 4.8,
-         color: 'purple',
-      initials: 'RS',
-      specialty: 'Estrategias Digitales'
+        color: 'purple',
+        initials: 'RS',
+        specialty: 'Estrategias Digitales'
       },
       {
         id: 2,
@@ -303,8 +302,8 @@ class MockReportesService {
         expertise: 'Finanzas Corporativas',
         rating: 4.9,
         color: 'blue',
-      initials: 'SC',
-      specialty: 'Gestión Financiera'
+        initials: 'SC',
+        specialty: 'Gestión Financiera'
       }
     ]);
   }
@@ -317,21 +316,20 @@ class MockReportesService {
         date: '2025-09-05',
         time: '9:00 AM',
         type: 'reunión',
-         confirmed: true
+        confirmed: true
       },
       {
         id: 2,
         title: 'Taller de Productividad',
         date: '2025-09-15',
-         time: '2:00 PM',
+        time: '2:00 PM',
         type: 'capacitación',
-         confirmed: false
+        confirmed: false
       }
     ]);
   }
 
   getCombinedChartData(startDate: string, endDate: string, range: string): Observable<ChartData> {
-    // Generate mock chart data based on range
     let labels: string[];
     let coursesData: number[];
     let consultationsData: number[];
@@ -347,8 +345,8 @@ class MockReportesService {
       coursesData = [15, 20, 18, 25];
       consultationsData = [10, 15, 12, 18];
       usersData = [20, 30, 35, 45];
-    } else { // yearly
-      labels = ['2020', '2021', '2022', '2023'];
+    } else {
+      labels = ['2022', '2023', '2024', '2025'];
       coursesData = [40, 60, 75, 90];
       consultationsData = [30, 45, 60, 70];
       usersData = [50, 80, 120, 150];
@@ -358,7 +356,6 @@ class MockReportesService {
   }
 
   getUsersChartData(range: string): Observable<UsersChartData> {
-    
     let labels: string[];
     let activeUsers: number[];
     let newUsers: number[];
@@ -371,7 +368,7 @@ class MockReportesService {
       labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];
       activeUsers = [10, 15, 18, 20, 22, 25];
       newUsers = [3, 5, 6, 7, 8, 9];
-    } else { // yearly
+    } else {
       labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       activeUsers = [10, 12, 15, 18, 20, 22, 25, 28, 30, 32, 35, 40];
       newUsers = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];
@@ -403,22 +400,6 @@ class MockReportesService {
   }
 }
 
-
-class SortPipe {
-  transform(array: any[], column: string, direction: 'asc' | 'desc'): any[] {
-    if (!array || !column) return array;
-    
-    return [...array].sort((a, b) => {
-      const aValue = a[column];
-      const bValue = b[column];
-
-      if(aValue < bValue) return direction === 'asc' ? -1 : 1;
-      if(aValue > bValue) return direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }
-}
-
 @Component({
   selector: 'app-reportes',
   standalone: true,
@@ -426,20 +407,18 @@ class SortPipe {
   templateUrl: './reportes.component.html',
   styleUrls: ['./reportes.component.css'],
   providers: [
-  MockReportesService,
-  MockModalService, 
-  MockAuthService,
-  MockExportService,
-  SortPipe
-]
-
+    MockReportesService,
+    MockModalService, 
+    MockAuthService,
+    MockExportService,
+    SortByPipe
+  ]
 })
-export class ReportesComponent implements OnInit, OnDestroy {
-  @ViewChild('combinedChart') combinedChartRef!: ElementRef;
-  @ViewChild('usersChart') usersChartRef!: ElementRef;
+export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('combinedChart') combinedChartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('usersChart') usersChartRef!: ElementRef<HTMLCanvasElement>;
 
-  nextTraining?: Training;
-
+  // Datos del usuario
   userData: UserData = {
     name: '',
     plan: '',
@@ -454,17 +433,17 @@ export class ReportesComponent implements OnInit, OnDestroy {
     status: '',
     nextGoal: ''
   };
+
+  // Estadísticas
   userStats = {
-  totalUsers: 0,
-  newUsers: 0,
-  growthPercentage: 0,
-  retentionPercentage: 0,
-  activeUsers: 0,
-  activePercentage: 0
-};
+    totalUsers: 0,
+    newUsers: 0,
+    growthPercentage: 0,
+    retentionPercentage: 0,
+    activeUsers: 0,
+    activePercentage: 0
+  };
 
-
-  // Estadísticas de cursos
   courseStats: CourseStats = {
     total: 0,
     completed: 0,
@@ -475,12 +454,24 @@ export class ReportesComponent implements OnInit, OnDestroy {
     notStartedPercentage: 0
   };
 
+  progressSummary = {
+    coursesCompleted: 0,
+    completedCourses: 0,  
+    totalCourses: 0,
+    consultationsCompleted: 0,
+    completedConsultations: 0,
+    totalConsultations: 0,
+    activeSessions: 0,
+    activeSessionTypes: [] as string[]     
+  };
+
   // Datos para gráficos y tablas
   milestones: Milestone[] = [];
   coursesData: Course[] = [];
   recentTrainings: Training[] = [];
   featuredSpeakers: Speaker[] = [];
   upcomingActivities: Activity[] = [];
+  nextTraining?: Training;
 
   // Filtros
   selectedFilter = 'month';
@@ -491,19 +482,8 @@ export class ReportesComponent implements OnInit, OnDestroy {
     start: '',
     end: ''
   };
-progressSummary = {
-  coursesCompleted: 0,
-  completedCourses: 0,  
-  totalCourses:0,
-  consultationsCompleted:0,
-  completedConsultations:0,
-  totalConsultations:0,
-  activeSessions:0,
-  activeSessionTypes: []as string[]     
-  
-};
 
-  // Ordenamiento de tabla
+  // Ordenamiento
   sortColumn = 'title';
   sortDirection: 'asc' | 'desc' = 'asc';
 
@@ -514,8 +494,8 @@ progressSummary = {
   isLoading = true;
 
   // Gráficos
-  private combinedChart!: Chart;
-  private usersChart!: Chart;
+  private combinedChart?: Chart;
+  private usersChart?: Chart;
 
   // Subscripciones
   private dataSubscriptions: Subscription[] = [];
@@ -526,9 +506,8 @@ progressSummary = {
     private router: Router,
     private authService: MockAuthService,
     private exportService: MockExportService,
-    private sortPipe: SortPipe
+    private sortPipe: SortByPipe
   ) {
-    // Configurar rango de fechas por defecto (últimos 30 días)
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(endDate.getDate() - 30);
@@ -541,24 +520,16 @@ progressSummary = {
 
   ngOnInit(): void {
     this.loadUserData();
-    this.loadInitialData();
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.initCharts();
-    }, 100);
+    this.initCharts();
+    this.loadInitialData();
   }
 
   ngOnDestroy(): void {
-    this.dataSubscriptions.forEach(sub => sub.unsubscribe());
-    
-    if (this.combinedChart) {
-      this.combinedChart.destroy();
-    }
-    if (this.usersChart) {
-      this.usersChart.destroy();
-    }
+    this.cleanupSubscriptions();
+    this.destroyCharts();
   }
 
   private loadUserData(): void {
@@ -584,218 +555,194 @@ progressSummary = {
     const loadData$ = forkJoin({
       businessData: this.reportesService.getBusinessData(),
       courseStats: this.reportesService.getCourseStatistics(),
-      
       milestones: this.reportesService.getMilestones(),
       courses: this.reportesService.getCourses(),
       trainings: this.reportesService.getRecentTrainings(),
       speakers: this.reportesService.getFeaturedSpeakers(),
-      activities: this.reportesService.getUpcomingActivities()
+      activities: this.reportesService.getUpcomingActivities(),
+      chartData: this.reportesService.getCombinedChartData(
+        this.dateRange.start, 
+        this.dateRange.end,
+        this.chartTimeRange
+      ),
+      usersData: this.reportesService.getUsersChartData(this.userChartTimeRange)
     });
 
     const dataSubscription = loadData$.subscribe({
-  next: (data) => {
-    this.businessData = data.businessData;
-    this.courseStats = data.courseStats;
+      next: (data) => {
+        this.businessData = data.businessData;
+        this.courseStats = data.courseStats;
 
-   
-    this.progressSummary = {
-  coursesCompleted: data.courseStats.completedPercentage,
-  completedCourses: data.courseStats.completed,
-  totalCourses: data.courseStats.total,
-  consultationsCompleted: 75,
-  completedConsultations: 15,
-  totalConsultations:20,
-  activeSessions: 2,
-  activeSessionTypes: ['Curso', 'Asesoria']
+        this.progressSummary = {
+          coursesCompleted: data.courseStats.completedPercentage,
+          completedCourses: data.courseStats.completed,
+          totalCourses: data.courseStats.total,
+          consultationsCompleted: 75,
+          completedConsultations: 15,
+          totalConsultations: 20,
+          activeSessions: 2,
+          activeSessionTypes: ['Curso', 'Asesoria']
+        };
 
-    };
+        this.milestones = data.milestones;
+        this.coursesData = data.courses;
+        this.recentTrainings = data.trainings;
+        this.featuredSpeakers = data.speakers;
+        this.upcomingActivities = data.activities;
+        this.nextTraining = data.trainings[0];
 
-    this.milestones = data.milestones;
-    this.coursesData = data.courses;
-    this.recentTrainings = data.trainings;
-    this.featuredSpeakers = data.speakers;
-    this.upcomingActivities = data.activities;
-    this.isLoading = false;
-    this.updateCharts();
-  },
-  error: (err) => {
-    console.error('Error loading data:', err);
-    this.isLoading = false;
-    this.modalService.showError('Error al cargar los datos. Por favor, intente nuevamente.');
-  }
-});
+        this.updateCombinedChart(data.chartData);
+        this.updateUsersChart(data.usersData);
 
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading data:', err);
+        this.isLoading = false;
+        this.modalService.showError('Error al cargar los datos. Por favor, intente nuevamente.');
+      }
+    });
 
     this.dataSubscriptions.push(dataSubscription);
   }
 
   private initCharts(): void {
-    this.initCombinedChart();
-    this.initUsersChart();
+    // Gráfico combinado
+    const combinedCtx = this.combinedChartRef?.nativeElement.getContext('2d');
+    if (combinedCtx) {
+      this.combinedChart = new Chart(combinedCtx, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Cursos Completados',
+              data: [],
+              backgroundColor: 'rgba(124, 58, 237, 0.7)',
+              borderColor: 'rgba(124, 58, 237, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Asesorías Realizadas',
+              data: [],
+              backgroundColor: 'rgba(16, 185, 129, 0.7)',
+              borderColor: 'rgba(16, 185, 129, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Usuarios Activos',
+              data: [],
+              type: 'line',
+              backgroundColor: 'rgba(59, 130, 246, 0.2)',
+              borderColor: 'rgba(59, 130, 246, 1)',
+              borderWidth: 2,
+              pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    // Gráfico de usuarios
+    const usersCtx = this.usersChartRef?.nativeElement.getContext('2d');
+    if (usersCtx) {
+      this.usersChart = new Chart(usersCtx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Usuarios Activos',
+              data: [],
+              borderColor: 'rgba(236, 72, 153, 1)',
+              backgroundColor: 'rgba(236, 72, 153, 0.1)',
+              borderWidth: 2,
+              tension: 0.3,
+              fill: true
+            },
+            {
+              label: 'Nuevos Usuarios',
+              data: [],
+              borderColor: 'rgba(16, 185, 129, 1)',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              borderWidth: 2,
+              tension: 0.3,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
   }
 
-  private initCombinedChart(): void {
-    const ctx = this.combinedChartRef?.nativeElement.getContext('2d');
-    if (!ctx) return;
+  private updateCombinedChart(data: ChartData): void {
+    if (!this.combinedChart) return;
 
+    this.combinedChart.data.labels = data.labels;
+    this.combinedChart.data.datasets[0].data = data.coursesData;
+    this.combinedChart.data.datasets[1].data = data.consultationsData;
+    this.combinedChart.data.datasets[2].data = data.usersData;
+    this.combinedChart.update();
+  }
+
+  private updateUsersChart(data: UsersChartData): void {
+    if (!this.usersChart) return;
+
+    this.usersChart.data.labels = data.labels;
+    this.usersChart.data.datasets[0].data = data.activeUsers;
+    this.usersChart.data.datasets[1].data = data.newUsers;
+    this.usersChart.update();
+
+    const lastActive = data.activeUsers.at(-1) ?? 0;
+    const lastNew = data.newUsers.at(-1) ?? 0;
+    const total = data.activeUsers.reduce((sum, v) => sum + v, 0);
+    const growth = total > 0 ? (lastNew / total) * 100 : 0;
+    const retention = total > 0 ? (lastActive / total) * 100 : 0;
+
+    this.userStats = {
+      totalUsers: total,
+      newUsers: lastNew,
+      growthPercentage: +growth.toFixed(1),
+      retentionPercentage: +retention.toFixed(1),
+      activeUsers: lastActive,
+      activePercentage: +((lastActive / total) * 100).toFixed(1)
+    };
+  }
+
+  private cleanupSubscriptions(): void {
+    this.dataSubscriptions.forEach(sub => sub.unsubscribe());
+    this.dataSubscriptions = [];
+  }
+
+  private destroyCharts(): void {
     if (this.combinedChart) {
       this.combinedChart.destroy();
     }
-
-    this.combinedChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: 'Cursos Completados',
-            data: [],
-            backgroundColor: 'rgba(124, 58, 237, 0.7)',
-            borderColor: 'rgba(124, 58, 237, 1)',
-            borderWidth: 1
-          },
-          {
-            label: 'Asesorías Realizadas',
-            data: [],
-            backgroundColor: 'rgba(16, 185, 129, 0.7)',
-            borderColor: 'rgba(16, 185, 129, 1)',
-            borderWidth: 1
-          },
-          {
-            label: 'Usuarios Activos',
-            data: [],
-            type: 'line',
-            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-            borderColor: 'rgba(59, 130, 246, 1)',
-            borderWidth: 2,
-            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
-            fill: true
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              precision: 0
-            }
-          }
-        },
-        plugins: {
-          tooltip: {
-            mode: 'index',
-            intersect: false
-          },
-          legend: {
-            position: 'top'
-          }
-        }
-      }
-    });
-  }
-
-  private initUsersChart(): void {
-    const ctx = this.usersChartRef?.nativeElement.getContext('2d');
-    if (!ctx) return;
-
     if (this.usersChart) {
       this.usersChart.destroy();
     }
-
-    this.usersChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: 'Usuarios Activos',
-            data: [],
-            borderColor: 'rgba(236, 72, 153, 1)',
-            backgroundColor: 'rgba(236, 72, 153, 0.1)',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: true
-          },
-          {
-            label: 'Nuevos Usuarios',
-            data: [],
-            borderColor: 'rgba(16, 185, 129, 1)',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: true
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              precision: 0
-            }
-          }
-        },
-        plugins: {
-          tooltip: {
-            mode: 'index',
-            intersect: false
-          },
-          legend: {
-            position: 'top'
-          }
-        }
-      }
-    });
   }
 
-  private updateCharts(): void {
-    if (!this.combinedChart || !this.usersChart) return;
-
-    const combinedDataSub = this.reportesService.getCombinedChartData(
-      this.dateRange.start, 
-      this.dateRange.end,
-      this.chartTimeRange
-    ).subscribe(data => {
-      this.combinedChart.data.labels = data.labels;
-      this.combinedChart.data.datasets[0].data = data.coursesData;
-      this.combinedChart.data.datasets[1].data = data.consultationsData;
-      this.combinedChart.data.datasets[2].data = data.usersData;
-      this.combinedChart.update();
-    });
-
-    const usersDataSub = this.reportesService.getUsersChartData(
-  this.userChartTimeRange
-).subscribe(data => {
-  const lastActive = data.activeUsers.at(-1) ?? 0;
-  const lastNew = data.newUsers.at(-1) ?? 0;
-  const total = data.activeUsers.reduce((sum, v) => sum + v, 0);
-  const growth = total > 0 ? (lastNew / total) * 100 : 0;
-  const retention = total > 0 ? (lastActive / total) * 100 : 0;
-
-  this.usersChart.data.labels = data.labels;
-  this.usersChart.data.datasets[0].data = data.activeUsers;
-  this.usersChart.data.datasets[1].data = data.newUsers;
-  this.usersChart.update();
-
-  
-  this.userStats = {
-    totalUsers: total,
-    newUsers: lastNew,
-    growthPercentage: +growth.toFixed(1),
-    retentionPercentage: +retention.toFixed(1),
-    activeUsers: lastActive,
-    activePercentage: +((lastActive / total) * 100).toFixed(1)
-  };
-});
-
-  }
-
+  // Métodos públicos
   toggleUserDropdown(): void {
     this.showUserDropdown = !this.showUserDropdown;
   }
@@ -875,11 +822,21 @@ progressSummary = {
 
   changeChartTimeRange(range: string): void {
     this.chartTimeRange = range;
-    this.updateCharts();
+    this.reportesService.getCombinedChartData(
+      this.dateRange.start, 
+      this.dateRange.end,
+      this.chartTimeRange
+    ).subscribe(data => {
+      this.updateCombinedChart(data);
+    });
   }
 
   updateUserChart(): void {
-    this.updateCharts();
+    this.reportesService.getUsersChartData(
+      this.userChartTimeRange
+    ).subscribe(data => {
+      this.updateUsersChart(data);
+    });
   }
 
   sortTable(column: string): void {
@@ -889,6 +846,7 @@ progressSummary = {
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
+    this.coursesData = this.sortPipe.transform([...this.coursesData], this.sortColumn, this.sortDirection);
   }
 
   getStatusText(status: string): string {
