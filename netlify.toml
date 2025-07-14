@@ -1,6 +1,6 @@
 [build]
-  command = "npm install --legacy-peer-deps && npm run build --configuration=production"
-  publish = "dist/project"  # <-- reemplaza con el nombre correcto si es distinto
+  command = "./build-netlify.sh"
+  publish = "dist/project"
 
 [[redirects]]
   from = "/*"
