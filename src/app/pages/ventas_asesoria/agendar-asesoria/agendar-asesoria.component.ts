@@ -32,7 +32,7 @@ export class AgendarAsesoriaComponent implements OnInit {
   minDate: Date = new Date();
   loadingHours = false;
   currentMonth: Date = new Date();
-  daysInMonth: {date: Date, available: boolean}[] = [];
+  daysInMonth: {date: Date, available: boolean, isSelected: boolean}[] = [];
 
   formData = {
     nombre: '',
@@ -50,21 +50,18 @@ export class AgendarAsesoriaComponent implements OnInit {
     whatsapp: '',
   };
 
-  // Horarios disponibles
   availableTimeSlots = [
     '09:00 AM', '10:00 AM', '11:00 AM',
     '12:00 PM', '01:00 PM', '02:00 PM',
     '03:00 PM', '04:00 PM'
   ];
 
-  // Fechas no disponibles para agendar (ejemplo con fechas dinámicas)
   unavailableDates: Date[] = [
-    new Date(new Date().setDate(new Date().getDate() + 2)), // 2 días después de hoy
-    new Date(new Date().setDate(new Date().getDate() + 5)), // 5 días después de hoy
-    new Date(new Date().setDate(new Date().getDate() + 8))  // 8 días después de hoy
+    new Date(new Date().setDate(new Date().getDate() + 2)),
+    new Date(new Date().setDate(new Date().getDate() + 5)),
+    new Date(new Date().setDate(new Date().getDate() + 8))
   ];
 
-  // Modalidades disponibles con íconos
   modalidades = [
     { 
       label: 'Virtual', 
@@ -95,7 +92,6 @@ export class AgendarAsesoriaComponent implements OnInit {
     this.generateDaysInMonth();
   }
 
-  // Navegación entre pasos con validación
   nextStep(): void {
     if (this.currentStep === 1 && !this.validateStep1()) {
       this.showError('Por favor completa todos los campos obligatorios');
@@ -122,83 +118,84 @@ export class AgendarAsesoriaComponent implements OnInit {
     return !!this.formData.nombre && 
            !!this.formData.email && 
            !!this.formData.telefono && 
-           !!this.formData.empresa ;
+           !!this.formData.empresa &&
+           !!this.formData.cargo &&
+           !!this.formData.sector &&
+           !!this.formData.tamanoEmpresa &&
+           this.formData.aceptaTerminos;
   }
 
   private validateStep2(): boolean {
-    return !!this.formData.fecha && !!this.formData.hora && !!this.formData.modalidad;
+    return !!this.formData.fecha && 
+           !!this.formData.hora && 
+           !!this.formData.modalidad;
   }
 
-  // Barra de progreso
   getProgressWidth(): string {
-    const progress = (this.currentStep - 1) * 4;
-    return `calc(${progress}% + ${progress > 0 ? 8 : 0}px)`;
+    const percentage = (this.currentStep - 1) * 45;
+    return `${percentage}%`;
   }
 
-  // Manejo de calendario personalizado
   generateDaysInMonth(): void {
     const year = this.currentMonth.getFullYear();
     const month = this.currentMonth.getMonth();
-    
-    // Obtener primer y último día del mes
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     
     this.daysInMonth = [];
     
-    // Generar todos los días del mes
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const date = new Date(year, month, day);
       const available = this.isDateAvailable(date);
-      this.daysInMonth.push({date, available});
+      const isSelected = this.formData.fecha ? 
+        date.getDate() === this.formData.fecha.getDate() && 
+        date.getMonth() === this.formData.fecha.getMonth() && 
+        date.getFullYear() === this.formData.fecha.getFullYear() : false;
+      
+      this.daysInMonth.push({date, available, isSelected});
     }
   }
 
   isDateAvailable(date: Date): boolean {
-    // Verificar si es fin de semana
     if (date.getDay() === 0 || date.getDay() === 6) return false;
     
-    // Verificar si está en unavailableDates
+    const today = new Date();
+    if (date < today && !this.isSameDay(date, today)) return false;
+    
     const isUnavailable = this.unavailableDates.some(unavailable => 
-      unavailable.getDate() === date.getDate() && 
-      unavailable.getMonth() === date.getMonth() && 
-      unavailable.getFullYear() === date.getFullYear()
+      this.isSameDay(unavailable, date)
     );
     
     return !isUnavailable;
   }
 
-  getDayClass(day: {date: Date, available: boolean}): string {
-    const baseClasses = 'h-10 flex items-center justify-center rounded-lg text-sm font-medium cursor-pointer transition-all';
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return date1.getDate() === date2.getDate() && 
+           date1.getMonth() === date2.getMonth() && 
+           date1.getFullYear() === date2.getFullYear();
+  }
+
+  getDayClass(day: {date: Date, available: boolean, isSelected: boolean}): string {
+    const baseClasses = 'h-10 w-10 flex items-center justify-center rounded-lg text-sm font-medium cursor-pointer transition-all relative';
     
-    // Si es el día actual
-    const today = new Date();
-    if (day.date.getDate() === today.getDate() && 
-        day.date.getMonth() === today.getMonth() && 
-        day.date.getFullYear() === today.getFullYear()) {
-      return `${baseClasses} bg-primary-100 border-2 border-primary-500 font-semibold`;
+    if (day.isSelected) {
+      return `${baseClasses} bg-gray-900 text-white`;
     }
     
-    // Si está seleccionado
-    if (this.formData.fecha && 
-        day.date.getDate() === this.formData.fecha.getDate() && 
-        day.date.getMonth() === this.formData.fecha.getMonth() && 
-        day.date.getFullYear() === this.formData.fecha.getFullYear()) {
-      return `${baseClasses} bg-black text-white font-semibold`;
-    }
-    
-    // Si no está disponible
     if (!day.available) {
       return `${baseClasses} text-gray-400 bg-gray-100 cursor-not-allowed`;
     }
     
-    // Día disponible normal
-    return `${baseClasses} text-gray-700 hover:bg-primary-50 hover:text-primary-600`;
+    return `${baseClasses} text-gray-700 hover:bg-gray-100`;
   }
 
   selectDate(day: {date: Date, available: boolean}): void {
     if (!day.available) return;
+    
     this.formData.fecha = day.date;
+    this.daysInMonth.forEach(d => {
+      d.isSelected = d.date.getTime() === day.date.getTime();
+    });
     this.loadAvailableTimeSlots();
   }
 
@@ -223,11 +220,11 @@ export class AgendarAsesoriaComponent implements OnInit {
   clearDateSelection(): void {
     this.formData.fecha = null;
     this.formData.hora = '';
-    this.generateDaysInMonth();
+    this.daysInMonth.forEach(d => d.isSelected = false);
   }
 
-  // Manejo de horarios
   selectTimeSlot(time: string): void {
+    if (this.isTimeSlotDisabled(time)) return;
     this.formData.hora = time;
   }
 
@@ -235,12 +232,14 @@ export class AgendarAsesoriaComponent implements OnInit {
     const baseClasses = 'py-2 px-2 rounded-lg border transition-all duration-200 text-sm font-medium flex items-center justify-center';
     
     if (this.formData.hora === time) {
-      return `${baseClasses} bg-black text-white border-primary-600 shadow-md`;
+      return `${baseClasses} bg-gray-800 text-white border-gray-800`;
     }
+    
     if (this.isTimeSlotDisabled(time)) {
       return `${baseClasses} bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed`;
     }
-    return `${baseClasses} bg-white text-gray-700 border-gray-200 hover:border-primary-400 hover:shadow-sm`;
+    
+    return `${baseClasses} bg-white text-gray-700 border-gray-300 hover:border-gray-400`;
   }
 
   isTimeSlotDisabled(time: string): boolean {
@@ -252,7 +251,8 @@ export class AgendarAsesoriaComponent implements OnInit {
     
     selectedDate.setHours(hours, minutes, 0, 0);
     
-    return selectedDate < now;
+    return selectedDate < now && 
+           this.isSameDay(selectedDate, now);
   }
 
   private parseTimeString(time: string): [number, number] {
@@ -272,28 +272,16 @@ export class AgendarAsesoriaComponent implements OnInit {
     this.loadingHours = true;
     this.formData.hora = '';
     
-    // Simular carga de API
     setTimeout(() => {
       this.loadingHours = false;
-      // Filtrar horarios no disponibles
-      this.availableTimeSlots = this.availableTimeSlots.filter(
-        time => !this.isTimeSlotDisabled(time)
-      );
-    }, 800);
+    }, 500);
   }
 
-  // Métodos para texto e íconos
   getModalidadText(value: string): string {
     const mod = this.modalidades.find(m => m.value === value);
     return mod ? mod.label : value;
   }
 
-  getModalityIcon(value: string): string {
-    const mod = this.modalidades.find(m => m.value === value);
-    return mod ? mod.icon : 'fa-question';
-  }
-
-  // Confirmación final
   confirmAppointment(): void {
     if (!this.validateStep1() || !this.validateStep2()) {
       this.showError('Por favor completa todos los campos requeridos');
@@ -301,11 +289,9 @@ export class AgendarAsesoriaComponent implements OnInit {
     }
 
     const appointment = this.buildAppointmentObject();
-    
     console.log('Asesoría agendada:', appointment);
     this.showSuccess();
     
-    // Redirigir después de 1.5 segundos
     setTimeout(() => {
       this.router.navigate(['/asesorias/list-total']);
     }, 1500);
