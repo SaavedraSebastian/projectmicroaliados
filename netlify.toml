@@ -1,5 +1,5 @@
 [build]
-  command = "./build-netlify.sh"
+  command = "npm install && npm run build"
   publish = "dist/project/browser"
 
 [[redirects]]
