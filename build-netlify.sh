@@ -1,6 +1,7 @@
 #!/bin/bash
-echo "✅ Instalando dependencias con --legacy-peer-deps"
+
+# Instala dependencias con --legacy-peer-deps
 npm install --legacy-peer-deps
 
-echo "✅ Compilando aplicación Angular"
-npm run build -- --configuration=production
+# Compila el proyecto Angular (asegúrate que sea el nombre correcto)
+npm run build
