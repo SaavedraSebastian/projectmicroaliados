@@ -10,7 +10,6 @@ import { ToastrService } from 'ngx-toastr';
 import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 import { SidebarMessageComponent } from '../../../shared/components/sidebar-message/sidebar-message.component';
 
-
 @Component({
   selector: 'app-dashboard-negocio',
   templateUrl: './dashbord-negocio.component.html',
@@ -41,107 +40,100 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
   
   private updateSubscription!: Subscription;
 
-
   public barChartOptions: ChartConfiguration['options'] = {
-  responsive: true,
-  maintainAspectRatio: false,
-  indexAxis: 'y', // horizontal
-  scales: {
-    x: {
-      max: 100,
-      grid: { display: false },
-      border: { display: false },
-      ticks: {
-        color: '#6B7280',
-        callback: (value: number | string) => value + '%'
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: {
+        max: 100,
+        grid: { display: false },
+        ticks: {
+          color: '#6B7280',
+          callback: (value: number | string) => value + '%'
+        },
+        title: {
+          display: true,
+          text: 'Progreso (%)',
+          color: '#6B7280',
+          font: { weight: 'bold' }
+        }
       },
-      title: {
-        display: true,
-        text: 'Progreso (%)',
-        color: '#6B7280',
-        font: { weight: 'bold' }
+      y: {
+        grid: { color: '#E5E7EB' },
+        ticks: {
+          color: '#6B7280'
+        }
       }
     },
-    y: {
-      grid: { color: '#E5E7EB' },
-      border: { display: false },
-      ticks: {
-        color: '#6B7280'
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1F2937',
+        titleColor: '#F9FAFB',
+        bodyColor: '#F9FAFB',
+        borderColor: '#374151',
+        borderWidth: 1,
+        padding: 12,
+        callbacks: {
+          label: (context) => `${context.label}: ${context.raw}% completado`
+        }
       }
     }
-  },
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      backgroundColor: '#1F2937',
-      titleColor: '#F9FAFB',
-      bodyColor: '#F9FAFB',
-      borderColor: '#374151',
-      borderWidth: 1,
-      padding: 12,
-      callbacks: {
-        label: (context) => `${context.label}: ${context.raw}% completado`
-      }
-    }
-  }
-};
-public vistaActual: 'semanal' | 'total' = 'semanal';
+  };
 
-public rutaData: ChartConfiguration['data'] = {
-  labels: ['Ideación', 'Validación', 'Propuesta de Valor', 'Prototipo', 'Lanzamiento'],
-  datasets: [{
-    data: [100, 75, 50, 25, 0],
-    backgroundColor: '#3B82F6',
-    hoverBackgroundColor: '#2563EB',
-    borderRadius: 6,
-    borderSkipped: false
-  }]
-};
+  public vistaActual: 'semanal' | 'total' = 'semanal';
 
-public rutaOptions: ChartConfiguration['options'] = {
-  responsive: true,
-  maintainAspectRatio: false,
-  indexAxis: 'y',
-  scales: {
-    x: {
-      max: 100,
-      grid: { display: false },
-      border: { display: false },
-      ticks: {
-        color: '#6B7280',
-        callback: (value: number | string) => value + '%'
+  public rutaData: ChartConfiguration['data'] = {
+    labels: ['Ideación', 'Validación', 'Propuesta de Valor', 'Prototipo', 'Lanzamiento'],
+    datasets: [{
+      data: [100, 75, 50, 25, 0],
+      backgroundColor: '#3B82F6',
+      hoverBackgroundColor: '#2563EB',
+      borderRadius: 6,
+      borderSkipped: false
+    }]
+  };
+
+  public rutaOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: {
+        max: 100,
+        grid: { display: false },
+        ticks: {
+          color: '#6B7280',
+          callback: (value: number | string) => value + '%'
+        },
+        title: {
+          display: true,
+          text: 'Progreso (%)',
+          color: '#6B7280',
+          font: { weight: 'bold' }
+        }
       },
-      title: {
-        display: true,
-        text: 'Progreso (%)',
-        color: '#6B7280',
-        font: { weight: 'bold' }
+      y: {
+        grid: { color: '#E5E7EB' },
+        ticks: { color: '#6B7280' }
       }
     },
-    y: {
-      grid: { color: '#E5E7EB' },
-      border: { display: false },
-      ticks: { color: '#6B7280' }
-    }
-  },
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      backgroundColor: '#1F2937',
-      titleColor: '#F9FAFB',
-      bodyColor: '#F9FAFB',
-      borderColor: '#374151',
-      borderWidth: 1,
-      padding: 12,
-      callbacks: {
-        label: (context) => `${context.label}: ${context.raw}% completado`
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1F2937',
+        titleColor: '#F9FAFB',
+        bodyColor: '#F9FAFB',
+        borderColor: '#374151',
+        borderWidth: 1,
+        padding: 12,
+        callbacks: {
+          label: (context) => `${context.label}: ${context.raw}% completado`
+        }
       }
     }
-  }
-};
-
-
-
+  };
 
   constructor(
     private authService: AuthService,
@@ -303,7 +295,6 @@ public rutaOptions: ChartConfiguration['options'] = {
     ];
     
     this.maxSales = Math.max(...this.stats.weeklySales);
-
   }
 
   private getCourseChartData(progress: number, color: string): any {
@@ -329,8 +320,6 @@ public rutaOptions: ChartConfiguration['options'] = {
     return colors[colorName] || '#3B82F6';
   }
 
- 
-
   private getRandomChange(base: number, range: number, min: number = 0): number {
     const change = Math.floor(Math.random() * range * 2) - range;
     return Math.max(min, base + change);
@@ -348,6 +337,4 @@ public rutaOptions: ChartConfiguration['options'] = {
       this.toastr.success(`Progreso actualizado: ${course.title} al ${course.progress}%`, 'Curso Actualizado');
     }
   }
-
-
 }
