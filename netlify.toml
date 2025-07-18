@@ -1,6 +1,6 @@
 [build]
   command = "./build-netlify.sh"
-  publish = "dist/project"
+  publish = "dist/project/browser"
 
 [[redirects]]
   from = "/*"
