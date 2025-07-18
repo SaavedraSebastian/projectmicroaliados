@@ -30,4 +30,5 @@ export interface AsesoriaComprada extends Asesoria {
   numeroSesion: number;
   totalSesiones: number;
   tags: string[];
+  nombreAsesoria: string;
 }

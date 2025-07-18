@@ -34,7 +34,8 @@ export class AsesoriasListStoreComponent {
       precioHora: 120,
       paqueteDesde: 300,
       ubicacion: 'Remoto',
-      categoria: 'Planificación'
+      categoria: 'Planificación',
+      nombreAsesoria:'Arquitectura Empresarial',
     },
     {
       id: 2,
@@ -48,7 +49,8 @@ export class AsesoriasListStoreComponent {
       precioHora: 150,
       paqueteDesde: 400,
       ubicacion: 'Lima, Perú',
-      categoria: 'Legal/Tributario'
+      categoria: 'Legal/Tributario',
+      nombreAsesoria: 'Legalidad Empresarial',
     },
     {
       id: 3,
@@ -62,7 +64,8 @@ export class AsesoriasListStoreComponent {
       precioHora: 110,
       paqueteDesde: 350,
       ubicacion: 'Remoto',
-      categoria: 'Marketing'
+      categoria: 'Marketing',
+      nombreAsesoria:'Marketing Empresarial Digital',
     },
     {
       id: 4,
@@ -76,7 +79,8 @@ export class AsesoriasListStoreComponent {
       precioHora: 130,
       paqueteDesde: 380,
       ubicacion: 'Remoto',
-      categoria: 'Finanzas'
+      categoria: 'Finanzas',
+      nombreAsesoria: 'Financias Empresariales',
     },
     {
       id: 5,
@@ -90,7 +94,8 @@ export class AsesoriasListStoreComponent {
       precioHora: 140,
       paqueteDesde: 450,
       ubicacion: 'Remoto',
-      categoria: 'Branding'
+      categoria: 'Branding',
+      nombreAsesoria:'Marca Personal',
     },
     {
       id: 6,
@@ -104,7 +109,8 @@ export class AsesoriasListStoreComponent {
       precioHora: 100,
       paqueteDesde: 320,
       ubicacion: 'Remoto',
-      categoria: 'Redes Sociales'
+      categoria: 'Redes Sociales',
+      nombreAsesoria: 'Redes Sociales en el emprendimiento',
     },
      {
     id: 7,
@@ -118,7 +124,8 @@ export class AsesoriasListStoreComponent {
     precioHora: 120,
     paqueteDesde: 350,
     ubicacion: 'Remoto',
-    categoria: 'Planificación'
+    categoria: 'Planificación',
+    nombreAsesoria: 'Planificación empresarial',
   },
   {
     id: 8,
@@ -132,7 +139,8 @@ export class AsesoriasListStoreComponent {
     precioHora: 150,
     paqueteDesde: 400,
     ubicacion: 'Remoto',
-    categoria: 'Legal/Tributario'
+    categoria: 'Legal/Tributario',
+    nombreAsesoria: 'Tributos',
   },
   {
     id: 9,
@@ -146,7 +154,8 @@ export class AsesoriasListStoreComponent {
     precioHora: 110,
     paqueteDesde: 300,
     ubicacion: 'Remoto',
-    categoria: 'Finanzas'
+    categoria: 'Finanzas',
+    nombreAsesoria: 'Economia Empresarial',
   },
   {
     id: 10,
@@ -160,7 +169,8 @@ export class AsesoriasListStoreComponent {
     precioHora: 90,
     paqueteDesde: 280,
     ubicacion: 'Remoto',
-    categoria: 'Automatización'
+    categoria: 'Automatización',
+    nombreAsesoria:'Automatización e IA en las empresas',
   },
   {
     id: 11,
@@ -174,7 +184,8 @@ export class AsesoriasListStoreComponent {
     precioHora: 130,
     paqueteDesde: 390,
     ubicacion: 'Remoto',
-    categoria: 'Ventas'
+    categoria: 'Ventas',
+    nombreAsesoria:'Ventas Digitales',
   },
   {
     id: 12,
@@ -188,7 +199,8 @@ export class AsesoriasListStoreComponent {
     precioHora: 100,
     paqueteDesde: 310,
     ubicacion: 'Remoto',
-    categoria: 'Liderazgo'
+    categoria: 'Liderazgo',
+    nombreAsesoria: 'Liderazgo Emprendedor y Branding'
   },
   {
     id: 13,
@@ -202,7 +214,8 @@ export class AsesoriasListStoreComponent {
     precioHora: 95,
     paqueteDesde: 290,
     ubicacion: 'Remoto',
-    categoria: 'Gestión del Tiempo'
+    categoria: 'Gestión del Tiempo',
+    nombreAsesoria: 'Planificación Productiva',
   },
   {
     id: 14,
@@ -216,7 +229,8 @@ export class AsesoriasListStoreComponent {
     precioHora: 105,
     paqueteDesde: 300,
     ubicacion: 'Remoto',
-    categoria: 'Mindset Emprendedor'
+    categoria: 'Mindset Emprendedor',
+    nombreAsesoria: 'Descubre tu Mindset',
   }
   ]);
 

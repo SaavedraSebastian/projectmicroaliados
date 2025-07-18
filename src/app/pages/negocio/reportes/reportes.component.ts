@@ -13,7 +13,7 @@ import { User } from '../../../shared/models/user.model';
 // Registrar todos los componentes de Chart.js
 Chart.register(...registerables);
 
-// Interfaces
+// Interfaces (se mantienen igual)
 interface UserData {
   name: string;
   plan: string;
@@ -109,7 +109,7 @@ interface FilteredData {
   activities: Activity[];
 }
 
-// Servicios mock
+// Servicios mock (se mantienen igual)
 class MockAuthService {
   getCurrentUser(): User {
     return { 
@@ -418,86 +418,31 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('combinedChart') combinedChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('usersChart') usersChartRef!: ElementRef<HTMLCanvasElement>;
 
-  // Datos del usuario
-  userData: UserData = {
-    name: '',
-    plan: '',
-    initials: ''
-  };
-
-  // Datos del negocio
-  businessData: BusinessData = {
-    name: '',
-    industry: '',
-    startDate: new Date(),
-    status: '',
-    nextGoal: ''
-  };
-
-  // Estadísticas
-  userStats = {
-    totalUsers: 0,
-    newUsers: 0,
-    growthPercentage: 0,
-    retentionPercentage: 0,
-    activeUsers: 0,
-    activePercentage: 0
-  };
-
-  courseStats: CourseStats = {
-    total: 0,
-    completed: 0,
-    inProgress: 0,
-    notStarted: 0,
-    completedPercentage: 0,
-    inProgressPercentage: 0,
-    notStartedPercentage: 0
-  };
-
-  progressSummary = {
-    coursesCompleted: 0,
-    completedCourses: 0,  
-    totalCourses: 0,
-    consultationsCompleted: 0,
-    completedConsultations: 0,
-    totalConsultations: 0,
-    activeSessions: 0,
-    activeSessionTypes: [] as string[]     
-  };
-
-  // Datos para gráficos y tablas
+  // Datos y propiedades del componente (se mantienen igual)
+  userData: UserData = { name: '', plan: '', initials: '' };
+  businessData: BusinessData = { name: '', industry: '', startDate: new Date(), status: '', nextGoal: '' };
+  userStats = { totalUsers: 0, newUsers: 0, growthPercentage: 0, retentionPercentage: 0, activeUsers: 0, activePercentage: 0 };
+  courseStats: CourseStats = { total: 0, completed: 0, inProgress: 0, notStarted: 0, completedPercentage: 0, inProgressPercentage: 0, notStartedPercentage: 0 };
+  progressSummary = { coursesCompleted: 0, completedCourses: 0, totalCourses: 0, consultationsCompleted: 0, completedConsultations: 0, totalConsultations: 0, activeSessions: 0, activeSessionTypes: [] as string[] };
   milestones: Milestone[] = [];
   coursesData: Course[] = [];
   recentTrainings: Training[] = [];
   featuredSpeakers: Speaker[] = [];
   upcomingActivities: Activity[] = [];
   nextTraining?: Training;
-
-  // Filtros
   selectedFilter = 'month';
   selectedContentType = 'all';
   chartTimeRange = 'quarterly';
   userChartTimeRange = '6months';
-  dateRange = {
-    start: '',
-    end: ''
-  };
-
-  // Ordenamiento
+  dateRange = { start: '', end: '' };
   sortColumn = 'title';
   sortDirection: 'asc' | 'desc' = 'asc';
-
-  // Estado UI
   showUserDropdown = false;
   currentYear = new Date().getFullYear();
   reportGeneratedDate = new Date();
   isLoading = true;
-
-  // Gráficos
   private combinedChart?: Chart;
   private usersChart?: Chart;
-
-  // Subscripciones
   private dataSubscriptions: Subscription[] = [];
 
   constructor(
@@ -511,7 +456,6 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(endDate.getDate() - 30);
-    
     this.dateRange = {
       start: startDate.toISOString().split('T')[0],
       end: endDate.toISOString().split('T')[0]
@@ -523,8 +467,10 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.initCharts();
-    this.loadInitialData();
+    setTimeout(() => {
+      this.initCharts();
+      this.loadInitialData();
+    }, 0);
   }
 
   ngOnDestroy(): void {
@@ -542,11 +488,7 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getInitials(name: string): string {
-    return name.split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
+    return name.split(' ').map(part => part[0]).join('').toUpperCase().substring(0, 2);
   }
 
   private loadInitialData(): void {
@@ -560,11 +502,7 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
       trainings: this.reportesService.getRecentTrainings(),
       speakers: this.reportesService.getFeaturedSpeakers(),
       activities: this.reportesService.getUpcomingActivities(),
-      chartData: this.reportesService.getCombinedChartData(
-        this.dateRange.start, 
-        this.dateRange.end,
-        this.chartTimeRange
-      ),
+      chartData: this.reportesService.getCombinedChartData(this.dateRange.start, this.dateRange.end, this.chartTimeRange),
       usersData: this.reportesService.getUsersChartData(this.userChartTimeRange)
     });
 
@@ -572,7 +510,6 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (data) => {
         this.businessData = data.businessData;
         this.courseStats = data.courseStats;
-
         this.progressSummary = {
           coursesCompleted: data.courseStats.completedPercentage,
           completedCourses: data.courseStats.completed,
@@ -583,7 +520,6 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
           activeSessions: 2,
           activeSessionTypes: ['Curso', 'Asesoria']
         };
-
         this.milestones = data.milestones;
         this.coursesData = data.courses;
         this.recentTrainings = data.trainings;
@@ -593,7 +529,6 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.updateCombinedChart(data.chartData);
         this.updateUsersChart(data.usersData);
-
         this.isLoading = false;
       },
       error: (err) => {
@@ -607,8 +542,14 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initCharts(): void {
-    // Gráfico combinado
-    const combinedCtx = this.combinedChartRef?.nativeElement.getContext('2d');
+    // Verificar que los elementos del DOM existen
+    if (!this.combinedChartRef?.nativeElement || !this.usersChartRef?.nativeElement) {
+      console.error('No se encontraron los elementos del gráfico');
+      return;
+    }
+
+    // Gráfico combinado con opciones mejoradas
+    const combinedCtx = this.combinedChartRef.nativeElement.getContext('2d');
     if (combinedCtx) {
       this.combinedChart = new Chart(combinedCtx, {
         type: 'bar',
@@ -620,23 +561,26 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
               data: [],
               backgroundColor: 'rgba(124, 58, 237, 0.7)',
               borderColor: 'rgba(124, 58, 237, 1)',
-              borderWidth: 1
+              borderWidth: 1,
+              borderRadius: 4
             },
             {
               label: 'Asesorías Realizadas',
               data: [],
               backgroundColor: 'rgba(16, 185, 129, 0.7)',
               borderColor: 'rgba(16, 185, 129, 1)',
-              borderWidth: 1
+              borderWidth: 1,
+              borderRadius: 4
             },
             {
               label: 'Usuarios Activos',
               data: [],
               type: 'line',
-              backgroundColor: 'rgba(59, 130, 246, 0.2)',
               borderColor: 'rgba(59, 130, 246, 1)',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
               borderWidth: 2,
               pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+              pointRadius: 4,
               fill: true
             }
           ]
@@ -644,17 +588,41 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                padding: 20
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
           scales: {
             y: {
-              beginAtZero: true
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              },
+              grid: {
+                   display: false
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
             }
           }
         }
       });
     }
 
-    // Gráfico de usuarios
-    const usersCtx = this.usersChartRef?.nativeElement.getContext('2d');
+    // Gráfico de usuarios con opciones mejoradas
+    const usersCtx = this.usersChartRef.nativeElement.getContext('2d');
     if (usersCtx) {
       this.usersChart = new Chart(usersCtx, {
         type: 'line',
@@ -668,6 +636,8 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
               backgroundColor: 'rgba(236, 72, 153, 0.1)',
               borderWidth: 2,
               tension: 0.3,
+              pointBackgroundColor: 'rgba(236, 72, 153, 1)',
+              pointRadius: 4,
               fill: true
             },
             {
@@ -677,6 +647,8 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
               backgroundColor: 'rgba(16, 185, 129, 0.1)',
               borderWidth: 2,
               tension: 0.3,
+              pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+              pointRadius: 4,
               fill: true
             }
           ]
@@ -684,9 +656,33 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                padding: 20
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
           scales: {
             y: {
-              beginAtZero: true
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              },
+              grid: {
+                display: false
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
             }
           }
         }
@@ -695,7 +691,10 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateCombinedChart(data: ChartData): void {
-    if (!this.combinedChart) return;
+    if (!this.combinedChart) {
+      console.error('El gráfico combinado no está inicializado');
+      return;
+    }
 
     this.combinedChart.data.labels = data.labels;
     this.combinedChart.data.datasets[0].data = data.coursesData;
@@ -705,15 +704,19 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateUsersChart(data: UsersChartData): void {
-    if (!this.usersChart) return;
+    if (!this.usersChart) {
+      console.error('El gráfico de usuarios no está inicializado');
+      return;
+    }
 
     this.usersChart.data.labels = data.labels;
     this.usersChart.data.datasets[0].data = data.activeUsers;
     this.usersChart.data.datasets[1].data = data.newUsers;
     this.usersChart.update();
 
-    const lastActive = data.activeUsers.at(-1) ?? 0;
-    const lastNew = data.newUsers.at(-1) ?? 0;
+    // Actualizar estadísticas de usuarios
+    const lastActive = data.activeUsers[data.activeUsers.length - 1] || 0;
+    const lastNew = data.newUsers[data.newUsers.length - 1] || 0;
     const total = data.activeUsers.reduce((sum, v) => sum + v, 0);
     const growth = total > 0 ? (lastNew / total) * 100 : 0;
     const retention = total > 0 ? (lastActive / total) * 100 : 0;
@@ -736,13 +739,15 @@ export class ReportesComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroyCharts(): void {
     if (this.combinedChart) {
       this.combinedChart.destroy();
+      this.combinedChart = undefined;
     }
     if (this.usersChart) {
       this.usersChart.destroy();
+      this.usersChart = undefined;
     }
   }
 
-  // Métodos públicos
+  // Métodos públicos (se mantienen igual)
   toggleUserDropdown(): void {
     this.showUserDropdown = !this.showUserDropdown;
   }

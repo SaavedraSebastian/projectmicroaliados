@@ -22,6 +22,10 @@ export class SideBarDetalleAsesoriaComponent {
   close() {
     this.isOpen.set(false);
   }
+  guardarAsesoria(asesoria: Asesoria) {
+  localStorage.setItem('asesoria', JSON.stringify(asesoria));
+}
+
 
   getColorCategoria(categoria: string): string {
     switch (categoria) {

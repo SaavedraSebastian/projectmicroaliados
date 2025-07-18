@@ -338,7 +338,6 @@ export class AsesoriaCampusComponent {
   }
 
   updateCurrentSession(session: any) {
-    // En una aplicación real, aquí cargarías los datos completos de la sesión
     this.asesorias.currentSession = {
       ...this.asesorias.currentSession,
       title: session.title,
