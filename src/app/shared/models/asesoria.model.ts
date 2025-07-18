@@ -10,6 +10,7 @@ export interface Asesoria {
   precioHora: number;
   paqueteDesde: number;
   ubicacion: string;
- categoria: string;
+  categoria: string;
+  nombreAsesoria:string;
   
 }

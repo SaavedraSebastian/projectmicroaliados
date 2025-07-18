@@ -13,7 +13,6 @@
     </div>
   </header>
 
-  <!-- Navegación -->
   <nav class="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
     <ng-container *ngFor="let item of menuItems">
       <a
@@ -43,7 +42,6 @@
     </ng-container>
   </nav>
 
-  <!-- Footer -->
   <footer class="p-3 border-t border-gray-200 dark:border-gray-700 mt-auto">
     <button
       (click)="logout()"
@@ -55,14 +53,12 @@
   </footer>
 </div>
 
-<!-- Overlay para móvil -->
 <div
   *ngIf="sidebarOpen"
   class="fixed inset-0 z-20 bg-black/30 md:hidden transition-opacity duration-200"
   (click)="closeSidebar()"
 ></div>
 
-<!-- Botón flotante -->
 <button
   class="md:hidden fixed bottom-4 right-4 z-40 w-12 h-12 rounded-full bg-blue-600 shadow-md flex items-center justify-center text-white transition-transform duration-200 hover:scale-105"
   (click)="toggleSidebar()"

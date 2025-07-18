@@ -39,6 +39,7 @@ export class ListAsesoriasComponent {
       descripcion: 'Te ayudo a validar tu idea de negocio y diseñar un modelo escalable con metodologías probadas.',
       valoracion: 4.9,
       valoraciones: 128,
+      nombreAsesoria:'branding',
       modalidades: ['Virtual', 'Documentación'],
       precioHora: 100,
       paqueteDesde: 3,
@@ -78,6 +79,7 @@ export class ListAsesoriasComponent {
       descripcion: 'Te guío en la formalización de tu negocio, trámites legales y cumplimiento tributario en Perú.',
       valoracion: 4.8,
       valoraciones: 96,
+      nombreAsesoria:'Conocimiento de Mercado',
       modalidades: ['Virtual', 'Presencial'],
       precioHora: 150,
       paqueteDesde: 2,
@@ -111,6 +113,7 @@ export class ListAsesoriasComponent {
       descripcion: 'Desarrollo estrategias de marketing digital personalizadas para hacer crecer tu negocio online.',
       valoracion: 4.9,
       valoraciones: 142,
+      nombreAsesoria: 'Estrategias Empresariales',
       modalidades: ['Virtual', 'Plan estratégico'],
       precioHora: 120,
       paqueteDesde: 3,
@@ -149,6 +152,7 @@ export class ListAsesoriasComponent {
       foto: 'https://randomuser.me/api/portraits/men/68.jpg',
       descripcion: 'Te ayudo a organizar las finanzas de tu negocio, optimizar costos y mejorar tu rentabilidad.',
       valoracion: 4.7,
+      nombreAsesoria: 'Financias Comerciales',
       valoraciones: 87,
       modalidades: ['Virtual', 'Plantillas'],
       precioHora: 130,
@@ -189,10 +193,28 @@ export class ListAsesoriasComponent {
   asesoriasCompradasFiltradas = signal<AsesoriaComprada[]>([]);
 
   constructor() {
+     this.cargarAsesoriasDesdeLocalStorage();
     this.filtrarAsesoriasCompradas();
   }
+  cargarAsesoriasDesdeLocalStorage(): void {
+  const asesoriasLocales = JSON.parse(localStorage.getItem('asesorias_confirmadas') || '[]');
 
-  // Métodos para abrir modales
+  // Asegurarte de que las fechas sean objetos Date
+  const asesoriasConvertidas: AsesoriaComprada[] = asesoriasLocales.map((a: any, index: number) => ({
+    ...a,
+    id: 1000 + index, // Puedes ajustar cómo generas los ID si lo necesitas
+    fechaCompra: new Date(a.fechaCompra),
+    sesionAgendada: a.sesionAgendada ? {
+      ...a.sesionAgendada,
+      fecha: new Date(a.sesionAgendada.fecha)
+    } : undefined
+  }));
+
+  // Combinar asesorías locales con las existentes (puedes reemplazar si prefieres)
+  const combinadas = [...this.asesoriasCompradas(), ...asesoriasConvertidas];
+  this.asesoriasCompradas.set(asesoriasConvertidas);
+}
+
   openAdvisoryDetails(asesoria: AsesoriaComprada): void {
     this.selectedAdvisory = asesoria;
     this.showAdvisoryDetailsModal.set(true);

@@ -9,6 +9,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { AsesoriaService } from '../../../core/services/asesoria.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-agendar-asesoria',
@@ -20,20 +22,22 @@ import { ToastModule } from 'primeng/toast';
     CommonModule,
     CalendarModule,
     DropdownModule,
-    ToastModule
+    ToastModule,
+     HttpClientModule
   ],
   templateUrl: './agendar-asesoria.component.html',
   styleUrls: ['./agendar-asesoria.component.css'],
   providers: [MessageService]
 })
 export class AgendarAsesoriaComponent implements OnInit {
-  @Input() asesoria!: Asesoria;
+ asesoria!: Asesoria;
+
   currentStep = 1;
   minDate: Date = new Date();
   loadingHours = false;
   currentMonth: Date = new Date();
   daysInMonth: {date: Date, available: boolean, isSelected: boolean}[] = [];
-
+  isLoading: boolean = false;
   formData = {
     nombre: '',
     email: '',
@@ -49,6 +53,7 @@ export class AgendarAsesoriaComponent implements OnInit {
     sector: '',
     whatsapp: '',
   };
+   occupiedTimeSlots: string[] = [];
 
   availableTimeSlots = [
     '09:00 AM', '10:00 AM', '11:00 AM',
@@ -85,12 +90,31 @@ export class AgendarAsesoriaComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private asesoriaService: AsesoriaService
   ) {}
 
   ngOnInit(): void {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state as { asesoria: Asesoria };
+
+    if (state?.asesoria) {
+      this.asesoria = state.asesoria;
+      localStorage.setItem('asesoria', JSON.stringify(this.asesoria));
+    } else {
+      const saved = localStorage.getItem('asesoria');
+      if (saved) {
+        this.asesoria = JSON.parse(saved);
+      } else {
+        console.warn('No se recibió asesoría desde la navegación. Redireccionando...');
+        this.router.navigate(['/asesorias/list']);
+        return;
+      }
+    }
+
     this.generateDaysInMonth();
   }
+
 
   nextStep(): void {
     if (this.currentStep === 1 && !this.validateStep1()) {
@@ -243,17 +267,18 @@ export class AgendarAsesoriaComponent implements OnInit {
   }
 
   isTimeSlotDisabled(time: string): boolean {
-    if (!this.formData.fecha) return false;
-    
-    const now = new Date();
-    const selectedDate = new Date(this.formData.fecha);
-    const [hours, minutes] = this.parseTimeString(time);
-    
-    selectedDate.setHours(hours, minutes, 0, 0);
-    
-    return selectedDate < now && 
-           this.isSameDay(selectedDate, now);
-  }
+  if (!this.formData.fecha) return false;
+
+  if (this.occupiedTimeSlots.includes(time)) return true;
+
+  const now = new Date();
+  const selectedDate = new Date(this.formData.fecha);
+  const [hours, minutes] = this.parseTimeString(time);
+  selectedDate.setHours(hours, minutes, 0, 0);
+
+  return selectedDate < now && this.isSameDay(selectedDate, now);
+}
+
 
   private parseTimeString(time: string): [number, number] {
     const [timePart, period] = time.split(' ');
@@ -269,47 +294,101 @@ export class AgendarAsesoriaComponent implements OnInit {
   }
 
   loadAvailableTimeSlots(): void {
-    this.loadingHours = true;
-    this.formData.hora = '';
-    
-    setTimeout(() => {
-      this.loadingHours = false;
-    }, 500);
+  this.loadingHours = true;
+  this.formData.hora = '';
+  this.occupiedTimeSlots = [];
+
+  if (!this.formData.fecha) {
+    this.loadingHours = false;
+    return;
   }
+
+  const fecha = new Date(this.formData.fecha);
+  const fechaKey = fecha.toISOString().split('T')[0]; // "YYYY-MM-DD"
+  const data = JSON.parse(localStorage.getItem('horasOcupadas') || '{}');
+  this.occupiedTimeSlots = data[fechaKey] || [];
+
+  this.loadingHours = false;
+}
+
 
   getModalidadText(value: string): string {
     const mod = this.modalidades.find(m => m.value === value);
     return mod ? mod.label : value;
   }
 
-  confirmAppointment(): void {
-    if (!this.validateStep1() || !this.validateStep2()) {
-      this.showError('Por favor completa todos los campos requeridos');
-      return;
+confirmAppointment(): void {
+  if (!this.validateStep1() || !this.validateStep2()) {
+    this.showError('Por favor completa todos los campos requeridos');
+    return;
+  }
+
+  this.isLoading = true; // 🔄 Mostrar spinner
+
+  const appointment = this.buildAppointmentObject();
+
+  // ✅ Guardar asesoría en localStorage
+  const asesoriasGuardadas = JSON.parse(localStorage.getItem('asesorias_confirmadas') || '[]');
+  asesoriasGuardadas.push(appointment);
+  localStorage.setItem('asesorias_confirmadas', JSON.stringify(asesoriasGuardadas));
+
+  this.asesoriaService.agendarAsesoria(appointment).subscribe({
+    next: () => {
+      this.saveTimeSlotAsOccupied(appointment.fechaCompleta); 
+      this.showSuccess();
+
+      this.isLoading = false;
+
+      setTimeout(() => {
+        this.router.navigate(['/asesorias/list-total']);
+      }, 1500);
+    },
+    error: (err) => {
+      console.error('Error al agendar asesoría', err);
+      this.isLoading = false;
+      this.showError('Hubo un problema al confirmar tu asesoría. Intenta más tarde.');
     }
+  });
+}
 
-    const appointment = this.buildAppointmentObject();
-    console.log('Asesoría agendada:', appointment);
-    this.showSuccess();
-    
-    setTimeout(() => {
-      this.router.navigate(['/asesorias/list-total']);
-    }, 1500);
-  }
+saveTimeSlotAsOccupied(fechaCompletaISO: string): void {
+  const fecha = new Date(fechaCompletaISO);
+  const fechaKey = fecha.toISOString().split('T')[0]; // Ej: "2025-07-21"
+  const hora = fecha.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
-  private buildAppointmentObject(): any {
-    const fechaCompleta = new Date(this.formData.fecha!);
-    const [hours, minutes] = this.parseTimeString(this.formData.hora);
-    
-    fechaCompleta.setHours(hours, minutes, 0, 0);
+  const data = JSON.parse(localStorage.getItem('horasOcupadas') || '{}');
+  data[fechaKey] = [...(data[fechaKey] || []), hora];
 
-    return {
-      asesoriaId: this.asesoria.categoria,
-      asesorId: this.asesoria.nombre,
-      ...this.formData,
-      fechaCompleta
-    };
-  }
+  localStorage.setItem('horasOcupadas', JSON.stringify(data));
+}
+
+
+
+ private buildAppointmentObject(): any {
+  const fechaCompleta = new Date(this.formData.fecha!);
+  const [hours, minutes] = this.parseTimeString(this.formData.hora);
+
+  fechaCompleta.setHours(hours, minutes, 0, 0);
+
+  return {
+    nombre: this.formData.nombre,
+    email: this.formData.email,
+    telefono: this.formData.telefono,
+    empresa: this.formData.empresa,
+    cargo: this.formData.cargo,
+    fecha: this.formData.fecha,
+    hora: this.formData.hora,
+    modalidad: this.formData.modalidad,
+    sector: this.formData.sector,
+    tamanoEmpresa: this.formData.tamanoEmpresa,
+    whatsapp: this.formData.whatsapp,
+    nombreAsesoria: this.asesoria.nombreAsesoria,
+    categoria: this.asesoria.categoria,
+    mentor: this.asesoria.nombre,
+    fechaCompleta: fechaCompleta.toISOString(), // Opcional: formato ISO
+  };
+}
+
 
   private showError(message: string): void {
     this.messageService.add({
