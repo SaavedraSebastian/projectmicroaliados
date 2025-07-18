@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    localUrl: 'https://backend-xc7y.onrender.com',
+    localUrl: 'https://backend-xc7y.onrender.com/api/v1',
     paypalReturnUrl: 'http://localhost:4200/store/cart',
     apiUrl: 'https://api-sandbox.factus.com.co',
     clientId: '9e0a5a07-a1ec-4f80-8553-ce338447b622',
