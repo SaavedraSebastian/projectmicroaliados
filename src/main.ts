@@ -1,15 +1,18 @@
-import { environment } from './environments/environment'; // 👈 importa esto primero
+import { environment } from './environments/environment'; 
 
-// Protección básica contra DevTools
 if (environment.production) {
-  setInterval(() => {
-    const before = new Date().getTime();
-    debugger;
-    const after = new Date().getTime();
-    if (after - before > 100) {
-      window.location.reload();
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  document.addEventListener('keydown', event => {
+    if (
+      event.key === 'F12' ||
+      (event.ctrlKey && event.shiftKey && event.key.toUpperCase() === 'I') || 
+      (event.ctrlKey && event.shiftKey && event.key.toUpperCase() === 'J') || 
+      (event.ctrlKey && event.key.toUpperCase() === 'U')                     
+    ) {
+      event.preventDefault();
     }
-  }, 1000);
+  });
 }
 
 import { bootstrapApplication } from '@angular/platform-browser';
