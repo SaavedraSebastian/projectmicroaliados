@@ -12,57 +12,154 @@ import { SidebarNegocioComponent } from "../../../shared/components/sidebar-nego
   styleUrls: ['./campania.component.css']
 })
 export class CampaniaComponent implements OnInit {
+  // Referencias y estado inicial
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  editorActive = false;
+  editorActive = true;
   currentTemplate = 'summer';
-  selectedCampaign = 1;
+  selectedCampaign: string | null = null;
   uploadedImage: any = null;
   currentImageTarget: 'logo' | 'promo' | null = null;
   campaignName = '';
   currentYear = new Date().getFullYear();
+  isDragging = false;
+  
+  // Notificaciones
   notification = {
     show: false,
-    message: '',
-    type: 'info'
+    type: 'info', // 'info' | 'success' | 'error' | 'warning'
+    icon: 'info-circle',
+    title: '',
+    message: ''
   };
-  
+
+  // Modales
+  modals = {
+    newCampaignModal: false,
+    imageUploadModal: false
+  };
+
+  // Tipos de campaña
+  campaignTypes = [
+    { id: 'regular', name: 'Regular', icon: 'envelope', description: 'Email estándar' },
+    { id: 'automation', name: 'Automatización', icon: 'robot', description: 'Serie automatizada' },
+    { id: 'abtesting', name: 'A/B Testing', icon: 'code-compare', description: 'Prueba diferentes versiones' }
+  ];
+  selectedCampaignType = '';
+  imageSettings = {
+    alignment: 'center',
+    size: 'medium'
+  };
+
+  // Filtros de campaña
+  campaignFilters = [
+    { id: 'all', label: 'Todas' },
+    { id: 'sent', label: 'Enviadas' },
+    { id: 'draft', label: 'Borradores' },
+    { id: 'scheduled', label: 'Programadas' }
+  ];
+  activeFilter = 'all';
+
+  // Configuración del editor
+  editorTabs = [
+    { id: 'content', label: 'Contenido', icon: 'edit' },
+    { id: 'settings', label: 'Configuración', icon: 'cog' },
+    { id: 'testing', label: 'Pruebas', icon: 'flask' }
+  ];
+  activeEditorTab = 'content';
+
+  // Formato de texto
+  showColorPicker = false;
+  showHighlightPicker = false;
+  selectedTextColor = '#000000';
+  selectedHighlightColor = '#FFFF00';
+  selectedSecondaryColor = '#4F46E5';
+  textColors = ['#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF'];
+  highlightColors = ['#FFFF00', '#FFC0CB', '#90EE90', '#ADD8E6', '#FFA07A', '#FFD700', '#98FB98', '#E6E6FA'];
+
+  // Configuración de campaña
+  emailSubject = '';
+  senderName = '';
+  senderEmail = '';
+  replyToEmail = '';
+  selectedSegment = '';
+  scheduledDate = '';
+  timezone = '-05:00';
+  showAdvancedSettings = false;
+  trackOpens = true;
+  trackClicks = true;
+  enableUTM = false;
+  utmCampaign = '';
+  utmMedium = 'email';
+  utmSource = 'newsletter';
+  utmContent = '';
+
+  // Pruebas A/B
+  enableABTesting = false;
+  abTestType = 'subject';
+  abTestSampleSize = '20';
+  abTestDuration = '24';
+  abTestMetric = 'open';
+  testEmails = '';
+
+  // Estadísticas
+  stats = [
+    { label: 'Suscriptores', value: '5,248', icon: 'users', iconColor: 'text-blue-600', bgColor: 'bg-blue-100', borderColor: 'border-blue-500', trend: 'up', change: '12%' },
+    { label: 'Tasa apertura', value: '22.4%', icon: 'envelope-open', iconColor: 'text-green-600', bgColor: 'bg-green-100', borderColor: 'border-green-500', trend: 'up', change: '3%' },
+    { label: 'Tasa de clics', value: '3.1%', icon: 'mouse-pointer', iconColor: 'text-purple-600', bgColor: 'bg-purple-100', borderColor: 'border-purple-500', trend: 'down', change: '1.2%' },
+    { label: 'Rebotes', value: '1.8%', icon: 'exclamation-triangle', iconColor: 'text-red-600', bgColor: 'bg-red-100', borderColor: 'border-red-500', trend: 'down', change: '0.5%' }
+  ];
+
   // Datos simulados
   campaigns = [
     {
-      id: 1,
-      title: 'Oferta de Verano',
+      id: '1',
+      title: 'Oferta de Verano 2026',
+      date: '15 Enero 2026',
+      recipients: 2548,
       status: 'sent',
-      date: '15 Sept 2023',
-      recipients: 2450,
+      icon: 'sun',
+      iconColor: 'orange',
       openRate: 24.5,
-      clickRate: 5.8,
-      icon: 'envelope',
-      iconColor: 'blue',
+      clickRate: 3.2,
+      performance: 78,
+      lastModified: '14 Julio 2026, 15:30',
+      deliveredRate: 98.5,
+      uniqueOpens: 2150,
+      openTrend: 'up',
+      openChange: 5.2,
+      clickTrend: 'down',
+      clickChange: 1.1,
+      bounceRate: 1.5,
+      hardBounces: 12,
+      bounceTrend: 'down',
+      bounceChange: 0.3,
+      totalClicks:'4',
       content: {
         logo: 'https://via.placeholder.com/200x50?text=Mi+Marca',
-        promo: 'https://via.placeholder.com/600x300?text=Imagen+Promocional',
+        promo: 'https://via.placeholder.com/600x300?text=Oferta+Verano',
         title: '¡Descuentos de Verano!',
         greeting: 'Hola [Nombre],',
-        mainText: 'Disfruta de nuestras increíbles ofertas de verano con descuentos de hasta el 40% en toda nuestra colección.',
+        mainText: 'Disfruta de nuestras increíbles ofertas de verano con descuentos de hasta el 40%.',
         buttonText: 'Ver Ofertas',
         feature1Title: 'Nueva Colección',
-        feature1Text: 'Descubre nuestros nuevos productos exclusivos para esta temporada.',
+        feature1Text: 'Descubre nuestros nuevos productos exclusivos.',
         feature2Title: 'Envío Gratis',
-        feature2Text: 'En compras superiores a $50 con nuestro código VERANO2023.'
+        feature2Text: 'En compras superiores a $50 con nuestro código VERANO2026.'
       }
     },
     {
-      id: 2,
-      title: 'Newsletter Septiembre',
+      id: '2',
+      title: 'Newsletter Mensual',
+      date: 'Programada: 25 Jun 2025',
+      recipients: 3120,
       status: 'scheduled',
-      date: 'Programada: 25 Sept 2023',
-      recipients: 2450,
-      icon: 'calendar-day',
-      iconColor: 'orange',
+      icon: 'newspaper',
+      iconColor: 'blue',
+      lastModified: '20 Jun 2025, 10:15',
       content: {
         logo: 'https://via.placeholder.com/200x50?text=Mi+Marca',
         promo: 'https://via.placeholder.com/600x300?text=Newsletter',
-        title: 'Novedades de Septiembre',
+        title: 'Novedades de Junio',
         greeting: 'Hola [Nombre],',
         mainText: 'Te traemos las últimas novedades y tendencias para este mes.',
         buttonText: 'Descubrir Más',
@@ -73,12 +170,13 @@ export class CampaniaComponent implements OnInit {
       }
     },
     {
-      id: 3,
+      id: '3',
       title: 'Nuevos Productos',
+      date: 'Últ. modificación: 18 Jun 2025',
       status: 'draft',
-      date: 'Últ. modificación: 18 Sept 2023',
       icon: 'pen',
       iconColor: 'purple',
+      lastModified: '18 Jun 2025, 09:45',
       content: {
         logo: 'https://via.placeholder.com/200x50?text=Mi+Marca',
         promo: 'https://via.placeholder.com/600x300?text=Nuevos+Productos',
@@ -94,134 +192,133 @@ export class CampaniaComponent implements OnInit {
     }
   ];
 
+  filteredCampaigns = this.campaigns;
+
   segments = [
-    {
-      title: 'Clientes Activos',
-      contacts: 1245,
-      description: 'Últ. compra en 90 días',
-      icon: 'users',
-      iconColor: 'blue'
-    },
-    {
-      title: 'Abandonaron Carrito',
-      contacts: 342,
-      description: 'Sin compra en 30 días',
-      icon: 'cart-arrow-down',
-      iconColor: 'green'
-    },
-    {
-      title: 'Clientes VIP',
-      contacts: 185,
-      description: 'Compras > $500',
-      icon: 'star',
-      iconColor: 'purple'
-    },
-    {
-      title: 'Inactivos',
-      contacts: 584,
-      description: 'Sin apertura en 180 días',
-      icon: 'calendar-times',
-      iconColor: 'orange'
-    }
+    { id: '1', title: 'Clientes frecuentes', contacts: 1245 },
+    { id: '2', title: 'Nuevos suscriptores', contacts: 832 },
+    { id: '3', title: 'Clientes inactivos', contacts: 567 }
   ];
 
   templates = [
-    {
-      id: 'summer',
-      title: 'Verano',
-      gradient: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
-      colors: {primary: '#f6d365', secondary: '#fda085'}
-    },
-    {
-      id: 'newsletter',
-      title: 'Newsletter',
-      gradient: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-      colors: {primary: '#a1c4fd', secondary: '#c2e9fb'}
-    },
-    {
-      id: 'elegant',
-      title: 'Elegante',
-      gradient: 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)',
-      colors: {primary: '#d4fc79', secondary: '#96e6a1'}
-    }
+    { id: 'summer', title: 'Verano', category: 'Marketing', premium: false, gradient: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)' },
+    { id: 'newsletter', title: 'Newsletter', category: 'Newsletter', premium: false, gradient: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)' },
+    { id: 'elegant', title: 'Elegante', category: 'General', premium: true, gradient: 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)' }
   ];
 
-  selectedSecondaryColor: string = '#fda085';
-  testEmailAddress: string = '';
+  topLinks = [
+    { url: 'https://miempresa.com/ofertas', clicks: 342, percentage: 42 },
+    { url: 'https://miempresa.com/nuevos-productos', clicks: 215, percentage: 26 },
+    { url: 'https://miempresa.com/contacto', clicks: 98, percentage: 12 }
+  ];
+
+  devices = [
+    { name: 'Móvil', percentage: 58, icon: 'mobile' },
+    { name: 'Escritorio', percentage: 32, icon: 'desktop' },
+    { name: 'Tablet', percentage: 10, icon: 'tablet' }
+  ];
+
+  showQuickActions = false;
+  showCampaignActionsDropdown = false;
 
   ngOnInit() {
-    this.selectCampaign(1);
+    this.filterCampaigns();
     this.updateSelectedColor();
   }
 
-  getSelectedCampaign() {
-    return this.campaigns.find(c => c.id === this.selectedCampaign);
+  toggleAdvancedSettings() {
+    this.showAdvancedSettings = !this.showAdvancedSettings;
   }
-
-  updateSelectedColor(): void {
-    const selected = this.templates.find(t => t.id === this.currentTemplate);
-    this.selectedSecondaryColor = selected ? selected.colors.secondary : '#000000';
-  }
-
-  // Notification functions
-  showNotification(message: string, type: 'info' | 'success' | 'error' = 'info') {
+  showNotification(title: string, message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') {
+    const icons = {
+      info: 'info-circle',
+      success: 'check-circle',
+      error: 'exclamation-circle',
+      warning: 'exclamation-triangle'
+    };
+    
+    
     this.notification = {
       show: true,
-      message,
-      type
+      type,
+      icon: icons[type],
+      title,
+      message
     };
     
     setTimeout(() => {
-      this.notification.show = false;
-    }, 3000);
+      this.dismissNotification();
+    }, 5000);
   }
 
-  // Modal functions
-  openModal(modalId: string) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.classList.remove('hidden');
-    }
+  dismissNotification() {
+    this.notification.show = false;
   }
 
-  triggerFileInput(): void {
-    this.fileInput.nativeElement.click();
+  createList(type: 'ol' | 'ul'){
+    document.execCommand(type === 'ol'? 'insertOrderedList' : 'insertUnorderedList', false, '');
   }
 
-  closeModal(modalId: string) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.classList.add('hidden');
-    }
+  outdent(){
+    document.execCommand('outdent',false,'');
+  }
+  indent(){
+    document.execCommand('indent', false,'');
+  }
+
+  openModal(modalId: keyof typeof this.modals) {
+    this.modals[modalId] = true;
+  }
+
+  closeModal(modalId: keyof typeof this.modals) {
+    this.modals[modalId] = false;
     
     if (modalId === 'imageUploadModal') {
       this.resetImageUpload();
     }
   }
 
-  // Campaign functions
-  selectCampaign(campaignId: number) {
+  // Funciones de campaña
+  getSelectedCampaign() {
+    return this.campaigns.find(c => c.id === this.selectedCampaign);
+  }
+
+  selectCampaign(campaignId: string) {
     this.selectedCampaign = campaignId;
-    const selectedCampaign = this.campaigns.find(c => c.id === campaignId);
-    if (selectedCampaign) {
-      this.showNotification(`Campaña "${selectedCampaign.title}" seleccionada`, 'info');
+    const campaign = this.getSelectedCampaign();
+    if (campaign) {
+      this.showNotification('Campaña seleccionada', `Has seleccionado "${campaign.title}"`, 'info');
     }
   }
 
+  filterCampaigns() {
+    if (this.activeFilter === 'all') {
+      this.filteredCampaigns = this.campaigns;
+    } else {
+      this.filteredCampaigns = this.campaigns.filter(c => c.status === this.activeFilter);
+    }
+  }
+
+  setFilter(filterId: string) {
+    this.activeFilter = filterId;
+    this.filterCampaigns();
+  }
+
   createNewCampaign() {
-    if (!this.campaignName) {
-      this.showNotification('Por favor, ingresa un nombre para la campaña', 'error');
+    if (!this.campaignName || !this.selectedCampaignType) {
+      this.showNotification('Datos incompletos', 'Por favor, completa todos los campos requeridos', 'error');
       return;
     }
 
-    // Crear nueva campaña
     const newCampaign = {
-      id: this.campaigns.length + 1,
+      id: (this.campaigns.length + 1).toString(),
       title: this.campaignName,
+      date: 'Borrador',
+      recipients: 0,
       status: 'draft',
-      date: 'Últ. modificación: ' + new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }),
-      icon: 'pen',
-      iconColor: 'purple',
+      icon: this.getCampaignTypeIcon(this.selectedCampaignType),
+      iconColor: this.getRandomColor(),
+      lastModified: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
       content: {
         logo: 'https://via.placeholder.com/200x50?text=Mi+Marca',
         promo: 'https://via.placeholder.com/600x300?text=Nueva+Campaña',
@@ -237,10 +334,26 @@ export class CampaniaComponent implements OnInit {
     };
 
     this.campaigns.push(newCampaign);
+    this.filterCampaigns();
     this.closeModal('newCampaignModal');
-    this.showNotification(`Campaña "${this.campaignName}" creada exitosamente`, 'success');
+    this.showNotification('Campaña creada', `"${this.campaignName}" ha sido creada exitosamente`, 'success');
     this.campaignName = '';
+    this.selectedCampaignType = '';
     this.selectCampaign(newCampaign.id);
+  }
+
+  getCampaignTypeIcon(type: string): string {
+    const campaignType = this.campaignTypes.find(t => t.id === type);
+    return campaignType ? campaignType.icon : 'envelope';
+  }
+
+  getRandomColor(): string {
+    const colors = ['blue', 'green', 'purple', 'orange', 'red', 'pink'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  selectCampaignType(type: string) {
+    this.selectedCampaignType = type;
   }
 
   selectTemplate(templateId: string) {
@@ -248,44 +361,42 @@ export class CampaniaComponent implements OnInit {
     this.updateSelectedColor();
   }
 
-  // Editor functions
-  toggleEditor() {
-    this.editorActive = !this.editorActive;
-    
-    if (!this.editorActive) {
-      // Guardar cambios cuando se desactiva el editor
-      const campaign = this.getSelectedCampaign();
-      if (campaign) {
-        campaign.content.title = (document.getElementById('emailTitle') as HTMLElement).innerText;
-        campaign.content.greeting = (document.getElementById('greetingText') as HTMLElement).innerText;
-        campaign.content.mainText = (document.getElementById('mainText') as HTMLElement).innerText;
-        campaign.content.buttonText = (document.getElementById('actionButton') as HTMLElement).innerText;
-        campaign.content.feature1Title = (document.getElementById('feature1Title') as HTMLElement).innerText;
-        campaign.content.feature1Text = (document.getElementById('feature1Text') as HTMLElement).innerText;
-        campaign.content.feature2Title = (document.getElementById('feature2Title') as HTMLElement).innerText;
-        campaign.content.feature2Text = (document.getElementById('feature2Text') as HTMLElement).innerText;
-        
-        campaign.date = 'Últ. modificación: ' + new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+  updateSelectedColor(): void {
+    const selected = this.templates.find(t => t.id === this.currentTemplate);
+    if (selected) {
+      // Extraer el color principal del gradiente (simplificado)
+      const gradientColors = selected.gradient.match(/#[a-fA-F0-9]{6}/g);
+      if (gradientColors && gradientColors.length > 0) {
+        this.selectedSecondaryColor = gradientColors[1] || gradientColors[0];
       }
-      this.showNotification('Cambios guardados correctamente', 'success');
-    } else {
-      this.showNotification('Modo edición activado. Haz clic en cualquier texto para editarlo.', 'info');
     }
+  }
+
+  // Funciones del editor
+  setActiveEditorTab(tabId: string) {
+    this.activeEditorTab = tabId;
   }
 
   formatText(format: string) {
     document.execCommand(format, false);
   }
 
-  changeTextColor() {
-    const color = prompt('Ingresa un color en formato HEX (ej: #3182ce):', '#3182ce');
-    if (color) {
-      document.execCommand('foreColor', false, color);
-    }
-  }
-
   changeAlignment(align: string) {
     document.execCommand('justify' + align.charAt(0).toUpperCase() + align.slice(1), false);
+  }
+
+  changeTextColor(color: string) {
+    this.selectedTextColor = color;
+    document.execCommand('foreColor', false, color);
+  }
+
+  changeHighlightColor(color: string) {
+    this.selectedHighlightColor = color;
+    document.execCommand('hiliteColor', false, color);
+  }
+
+  clearFormatting() {
+    document.execCommand('removeFormat', false);
   }
 
   insertLink() {
@@ -303,33 +414,81 @@ export class CampaniaComponent implements OnInit {
     }
   }
 
-  // Image upload functions
+  insertDivider() {
+    const dividerHtml = `<hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;">`;
+    document.execCommand('insertHTML', false, dividerHtml);
+  }
+
+  toggleCodeView() {
+    this.showNotification('Funcionalidad', 'Vista HTML no implementada en esta demo', 'info');
+  }
+
+  undo() {
+    document.execCommand('undo', false);
+  }
+
+  redo() {
+    document.execCommand('redo', false);
+  }
+
+  // Funciones para subir imágenes
+  triggerFileInput(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+    
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      this.onFileSelected({ target: { files: event.dataTransfer.files } });
+    }
+  }
+
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (!file) return;
 
-    // Validar tamaño (máximo 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      this.showNotification('El archivo es demasiado grande (máximo 5MB)', 'error');
+    // Validar tamaño (máximo 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      this.showNotification('Error', 'El archivo es demasiado grande (máximo 10MB)', 'error');
       return;
     }
 
     // Validar tipo
-    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
     if (!validTypes.includes(file.type)) {
-      this.showNotification('Formato de archivo no válido. Usa JPG, PNG o GIF.', 'error');
+      this.showNotification('Error', 'Formato de archivo no válido. Usa JPG, PNG, GIF o SVG.', 'error');
       return;
     }
 
     // Leer y previsualizar imagen
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      this.uploadedImage = {
-        src: e.target.result,
-        name: file.name,
-        size: this.formatFileSize(file.size),
-        file: file
+      const img = new Image();
+      img.onload = () => {
+        this.uploadedImage = {
+          src: e.target.result,
+          name: file.name,
+          size: this.formatFileSize(file.size),
+          dimensions: `${img.width}×${img.height}px`,
+          file: file
+        };
       };
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -342,12 +501,12 @@ export class CampaniaComponent implements OnInit {
 
   applyUploadedImage() {
     if (!this.uploadedImage || !this.currentImageTarget) {
-      this.showNotification('Primero debes seleccionar una imagen', 'error');
+      this.showNotification('Error', 'Primero debes seleccionar una imagen y un destino', 'error');
       return;
     }
 
     const campaign = this.getSelectedCampaign();
-    if (campaign) {
+    if (campaign && campaign.content) {
       if (this.currentImageTarget === 'logo') {
         campaign.content.logo = this.uploadedImage.src;
       } else {
@@ -356,6 +515,7 @@ export class CampaniaComponent implements OnInit {
       
       this.closeModal('imageUploadModal');
       this.showNotification(
+        'Imagen actualizada',
         this.currentImageTarget === 'logo' 
           ? 'Logo actualizado correctamente' 
           : 'Imagen promocional actualizada correctamente', 
@@ -364,75 +524,182 @@ export class CampaniaComponent implements OnInit {
     }
   }
 
-  resetImageUpload() {
+  removeUploadedImage() {
     this.uploadedImage = null;
-    this.currentImageTarget = null;
     if (this.fileInput && this.fileInput.nativeElement) {
       this.fileInput.nativeElement.value = '';
     }
   }
 
+  resetImageUpload() {
+    this.uploadedImage = null;
+    this.currentImageTarget = null;
+    this.isDragging = false;
+    this.removeUploadedImage();
+  }
+
   prepareImageUpload(target: 'logo' | 'promo') {
-    if (!this.editorActive) return;
     this.currentImageTarget = target;
     this.openModal('imageUploadModal');
   }
 
-  // Misc functions
-  sendTestEmail() {
-    this.testEmailAddress = prompt('Ingresa tu dirección de email para enviar la prueba:', 'tucorreo@ejemplo.com') || '';
-    
-    if (this.testEmailAddress) {
-      // Simular envío de prueba
-      setTimeout(() => {
-        this.showNotification(`Correo de prueba enviado a ${this.testEmailAddress}`, 'success');
-      }, 1500);
+  // Funciones de acciones
+  toggleQuickActions() {
+    this.showQuickActions = !this.showQuickActions;
+  }
+
+  toggleCampaignActions() {
+    this.showCampaignActionsDropdown = !this.showCampaignActionsDropdown;
+  }
+
+  showCampaignActions(campaignId: string, event: Event) {
+    event.stopPropagation();
+    this.selectCampaign(campaignId);
+    this.toggleCampaignActions();
+  }
+
+  // Funciones de estado
+  getStatusClass(status?: string): string {
+    switch (status) {
+      case 'sent': return 'bg-green-100 text-green-800';
+      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'draft': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   }
 
-  getStatusClass(status: string): string {
+  getStatusLabel(status?: string): string {
     switch (status) {
-      case 'sent': return 'bg-green-100 text-green-600';
-      case 'scheduled': return 'bg-blue-100 text-blue-600';
-      case 'draft': return 'bg-gray-100 text-gray-600';
+      case 'sent': return 'Enviada';
+      case 'scheduled': return 'Programada';
+      case 'draft': return 'Borrador';
+      default: return 'Desconocido';
+    }
+  }
+
+  getIconColorClass(color?: string): string {
+    switch (color) {
+      case 'blue': return 'bg-blue-100 text-blue-600';
+      case 'orange': return 'bg-orange-100 text-orange-600';
+      case 'purple': return 'bg-purple-100 text-purple-600';
+      case 'green': return 'bg-green-100 text-green-600';
+      case 'red': return 'bg-red-100 text-red-600';
+      case 'pink': return 'bg-pink-100 text-pink-600';
       default: return 'bg-gray-100 text-gray-600';
     }
   }
 
-  getIconColorClass(color: string): string {
-    switch (color) {
-      case 'blue': return 'bg-blue-100/50 text-blue-600';
-      case 'orange': return 'bg-orange-100/50 text-orange-600';
-      case 'purple': return 'bg-purple-100/50 text-purple-600';
-      case 'green': return 'bg-green-100/50 text-green-600';
-      default: return 'bg-gray-100/50 text-gray-600';
-    }
+  getPerformanceClass(performance: number): string {
+    if (performance > 75) return 'text-green-600';
+    if (performance > 50) return 'text-yellow-600';
+    return 'text-red-600';
   }
 
-  // Función para simular el envío de la campaña
-  sendCampaign() {
+  // Funciones de campaña
+  saveDraft() {
     const campaign = this.getSelectedCampaign();
     if (campaign) {
-      campaign.status = 'sent';
-      campaign.date = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
-      campaign.openRate = Math.random() * 10 + 20; // 20-30%
-      campaign.clickRate = Math.random() * 3 + 3; // 3-6%
-      this.showNotification(`Campaña "${campaign.title}" enviada a ${campaign.recipients} destinatarios`, 'success');
+      campaign.lastModified = new Date().toLocaleDateString('es-ES', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      this.showNotification('Borrador guardado', 'Los cambios se han guardado correctamente', 'success');
     }
   }
 
-  // Función para programar campaña
+  previewCampaign() {
+    this.showNotification('Vista previa', 'Esta funcionalidad abriría una vista previa de la campaña', 'info');
+  }
+
+  sendTestEmail() {
+    if (!this.testEmails) {
+      this.showNotification('Error', 'Por favor ingresa al menos una dirección de email', 'error');
+      return;
+    }
+
+    const emails = this.testEmails.split(',').map(e => e.trim()).filter(e => e.length > 0);
+    this.showNotification(
+      'Prueba enviada', 
+      `Correo de prueba enviado a ${emails.length} dirección(es): ${emails.join(', ')}`, 
+      'success'
+    );
+  }
+
   scheduleCampaign() {
     const campaign = this.getSelectedCampaign();
     if (campaign) {
-      const date = prompt('Ingresa la fecha de envío (DD/MM/AAAA):', 
-                         new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES'));
-      
-      if (date) {
-        campaign.status = 'scheduled';
-        campaign.date = 'Programada: ' + date;
-        this.showNotification(`Campaña "${campaign.title}" programada para ${date}`, 'success');
+      if (!this.scheduledDate) {
+        this.showNotification('Error', 'Por favor selecciona una fecha de envío', 'error');
+        return;
       }
+
+      campaign.status = 'scheduled';
+      campaign.date = `Programada: ${new Date(this.scheduledDate).toLocaleDateString('es-ES', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })}`;
+      
+      this.showNotification(
+        'Campaña programada', 
+        `"${campaign.title}" se enviará el ${campaign.date.replace('Programada: ', '')}`,
+        'success'
+      );
     }
+  }
+
+  sendCampaign() {
+    const campaign = this.getSelectedCampaign();
+    if (campaign) {
+      if (campaign.status === 'sent') {
+        this.showNotification('Error', 'Esta campaña ya ha sido enviada', 'error');
+        return;
+      }
+
+      campaign.status = 'sent';
+      campaign.date = new Date().toLocaleDateString('es-ES', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      campaign.recipients = Math.floor(Math.random() * 5000) + 1000;
+      campaign.openRate = parseFloat((Math.random() * 15 + 15).toFixed(1)); // 15-30%
+      campaign.clickRate = parseFloat((Math.random() * 5 + 2).toFixed(1)); // 2-7%
+      campaign.performance = Math.floor(Math.random() * 40) + 60; // 60-100%
+      campaign.deliveredRate = 98.5;
+      campaign.uniqueOpens = Math.floor(campaign.recipients * (campaign.openRate / 100));
+      campaign.openTrend = Math.random() > 0.3 ? 'up' : 'down';
+      campaign.openChange = parseFloat((Math.random() * 5 + 1).toFixed(1));
+      campaign.clickTrend = Math.random() > 0.5 ? 'up' : 'down';
+      campaign.clickChange = parseFloat((Math.random() * 3 + 1).toFixed(1));
+      campaign.bounceRate = parseFloat((Math.random() * 2).toFixed(1));
+      campaign.hardBounces = Math.floor(campaign.recipients * (campaign.bounceRate / 100 * 0.3));
+      campaign.bounceTrend = Math.random() > 0.7 ? 'up' : 'down';
+      campaign.bounceChange = parseFloat((Math.random() * 1).toFixed(1));
+      
+      this.showNotification(
+        'Campaña enviada', 
+        `"${campaign.title}" ha sido enviada a ${campaign.recipients} destinatarios`,
+        'success'
+      );
+    }
+  }
+
+  continueCampaign(campaignId: string) {
+    this.selectCampaign(campaignId);
+    this.showNotification('Continuar edición', 'Puedes continuar editando tu campaña', 'info');
+  }
+
+  editScheduledCampaign(campaignId: string) {
+    this.selectCampaign(campaignId);
+    this.showNotification('Editar programación', 'Puedes modificar la programación de esta campaña', 'info');
   }
 }
