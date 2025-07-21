@@ -1,6 +1,408 @@
-<div class="min-h-screen bg-gray font-sans" style="font-family: 'Barlow', sans-serif;">
-    <app-sidebar-negocio></app-sidebar-negocio>
-    <div class="flex flex-col ml-0 lg:ml-64 transition-all duration-300">
-        <app-navbar class="sticky top-0 z-10 shadow-sm"></app-navbar>
+<div class="min-h-screen bg-gray-50 font-sans dark:bg-gray-900" style="font-family: 'Barlow', sans-serif;">
+  <app-sidebar-negocio></app-sidebar-negocio>
+  
+  <div class="flex flex-col ml-0 lg:ml-64 transition-all duration-300">
+    <app-navbar class="sticky top-0 z-10 shadow-sm"></app-navbar>
+    
+    <main class="p-4 md:p-6">
+      <!-- Header del Perfil -->
+      <div class="relative mb-6 rounded-xl overflow-hidden">
+        <!-- Banner de portada -->
+        <div class="h-40 md:h-56 bg-gradient-to-r from-purple-500 to-blue-600 w-full relative">
+          <img [src]="coverImage" class="w-full h-full object-cover">
+          <label class="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full cursor-pointer shadow-md">
+            <i class="fas fa-camera"></i>
+            <input type="file" class="hidden" (change)="onFileSelected($event, 'cover')" accept="image/*">
+          </label>
+        </div>
+        
+        <!-- Sección de información del usuario -->
+        <div class="relative px-4 md:px-6 pb-6 -mt-16">
+          <div class="flex flex-col md:flex-row items-start md:items-end gap-4">
+            <!-- Avatar -->
+            <div class="relative">
+              <img [src]="profileImage" 
+                   class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white dark:border-gray-800 shadow-lg">
+              <label class="absolute bottom-2 right-2 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center cursor-pointer shadow-md">
+                <i class="fas fa-camera text-gray-700 text-xs"></i>
+                <input type="file" class="hidden" (change)="onFileSelected($event, 'profile')" accept="image/*">
+              </label>
+            </div>
+            
+            <!-- Información básica -->
+            <div class="flex-1">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+                    {{datosRegistro.nombre}} {{datosRegistro.apellidos}}
+                  </h1>
+                  <p class="text-gray-600 dark:text-gray-300">{{userProfile.title || 'Emprendedor'}}</p>
+                </div>
+                <div class="flex gap-2">
+                  <button (click)="openEditModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                    <i class="fas fa-edit mr-2"></i> Editar perfil
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Stats -->
+              <div class="flex flex-wrap gap-4 mt-4">
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-envelope text-gray-500 dark:text-gray-400"></i>
+                  <span class="text-gray-700 dark:text-gray-300">{{datosRegistro.correo}}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-phone text-gray-500 dark:text-gray-400"></i>
+                  <span class="text-gray-700 dark:text-gray-300">{{datosRegistro.telefono}}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-briefcase text-gray-500 dark:text-gray-400"></i>
+                  <span class="text-gray-700 dark:text-gray-300">
+                    {{datosRegistro.empresa}} <span *ngIf="datosRegistro.rubro">({{datosRegistro.rubro}})</span>
+                  </span>
+                </div>
+                <div class="flex items-center gap-2" *ngIf="userProfile.location">
+                  <i class="fas fa-map-marker-alt text-gray-500 dark:text-gray-400"></i>
+                  <span class="text-gray-700 dark:text-gray-300">{{userProfile.location}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Contenido principal -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Columna izquierda - Información personal -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Sobre mí -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Sobre mí</h2>
+            <p class="text-gray-600 dark:text-gray-300 whitespace-pre-line">
+              {{userProfile.about || 'Completa tu información en "Editar perfil"'}}
+            </p>
+            
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Intereses</h3>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <span *ngFor="let interest of userProfile.interests" 
+                        class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full dark:bg-blue-900/30 dark:text-blue-300">
+                    {{interest}}
+                  </span>
+                  <span *ngIf="userProfile.interests.length === 0" class="text-xs text-gray-500 dark:text-gray-400">
+                    Añade tus intereses
+                  </span>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Habilidades</h3>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <span *ngFor="let skill of userProfile.skills" 
+                        class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full dark:bg-yellow-900/30 dark:text-yellow-300">
+                    {{skill}}
+                  </span>
+                  <span *ngIf="userProfile.skills.length === 0" class="text-xs text-gray-500 dark:text-gray-400">
+                    Añade tus habilidades
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Experiencia -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Experiencia</h2>
+              <button class="text-blue-600 hover:text-blue-700 text-sm font-medium dark:text-blue-400">
+                <i class="fas fa-plus mr-1"></i> Añadir
+              </button>
+            </div>
+            
+            <div class="space-y-4">
+              <div *ngFor="let exp of userProfile.experiences" class="flex gap-4">
+                <div class="flex-shrink-0">
+                  <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center dark:bg-blue-900/30">
+                    <i class="fas fa-briefcase text-blue-600 dark:text-blue-400"></i>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-800 dark:text-white">{{exp.position}}</h3>
+                  <p class="text-gray-600 dark:text-gray-400">{{exp.company}}</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">{{exp.period}}</p>
+                  <p class="mt-1 text-gray-600 dark:text-gray-300 whitespace-pre-line">
+                    {{exp.description}}
+                  </p>
+                </div>
+              </div>
+              
+              <div *ngIf="userProfile.experiences.length === 0" class="text-center py-4">
+                <p class="text-gray-500 dark:text-gray-400">Añade tu experiencia profesional</p>
+                <button class="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium dark:text-blue-400">
+                  <i class="fas fa-plus mr-1"></i> Agregar experiencia
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Educación -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Educación</h2>
+              <button class="text-blue-600 hover:text-blue-700 text-sm font-medium dark:text-blue-400">
+                <i class="fas fa-plus mr-1"></i> Añadir
+              </button>
+            </div>
+            
+            <div *ngIf="userProfile.education.institution">
+              <div class="flex gap-4">
+                <div class="flex-shrink-0">
+                  <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center dark:bg-green-900/30">
+                    <i class="fas fa-graduation-cap text-green-600 dark:text-green-400"></i>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-800 dark:text-white">{{userProfile.education.institution}}</h3>
+                  <p class="text-gray-600 dark:text-gray-400">{{userProfile.education.degree}}</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">{{userProfile.education.period}}</p>
+                  <p class="mt-1 text-gray-600 dark:text-gray-300 whitespace-pre-line">
+                    {{userProfile.education.description}}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div *ngIf="!userProfile.education.institution" class="text-center py-4">
+              <p class="text-gray-500 dark:text-gray-400">Añade tu formación académica</p>
+              <button class="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium dark:text-blue-400">
+                <i class="fas fa-plus mr-1"></i> Agregar educación
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Columna derecha - Stats y redes -->
+        <div class="space-y-6">
+          <!-- Progreso del perfil -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Completitud del perfil</h2>
+            
+            <div class="mb-3">
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-gray-600 dark:text-gray-300">{{profileCompletion}}% completado</span>
+                <span class="text-blue-600 dark:text-blue-400" *ngIf="profileCompletion >= 80">Excelente</span>
+                <span class="text-yellow-600 dark:text-yellow-400" *ngIf="profileCompletion >= 50 && profileCompletion < 80">Bueno</span>
+                <span class="text-red-600 dark:text-red-400" *ngIf="profileCompletion < 50">Básico</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                <div class="h-2 rounded-full" 
+                     [ngClass]="{
+                       'bg-blue-600': profileCompletion >= 80,
+                       'bg-yellow-500': profileCompletion >= 50 && profileCompletion < 80,
+                       'bg-red-500': profileCompletion < 50
+                     }" 
+                     [style.width.%]="profileCompletion">
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-4">
+              <button (click)="openEditModal()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                Completar perfil
+              </button>
+            </div>
+          </div>
+          
+          <!-- Redes sociales -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Redes sociales</h2>
+            
+            <div class="space-y-3">
+              <div *ngIf="userProfile.socialLinks.facebook" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg dark:bg-gray-700/50">
+                <div class="flex items-center gap-3">
+                  <i class="fab fa-facebook-f text-[#1877F2]"></i>
+                  <span class="text-sm">{{getSocialUsername(userProfile.socialLinks.facebook)}}</span>
+                </div>
+                <button (click)="connectSocial('facebook')" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400">
+                  Cambiar
+                </button>
+              </div>
+              <button *ngIf="!userProfile.socialLinks.facebook" (click)="connectSocial('facebook')" 
+                      class="w-full flex items-center gap-3 px-4 py-2 bg-[#1877F2] text-white rounded-lg hover:bg-[#166FE5] transition-colors">
+                <i class="fab fa-facebook-f"></i>
+                <span>Conectar Facebook</span>
+              </button>
+              
+              <div *ngIf="userProfile.socialLinks.twitter" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg dark:bg-gray-700/50">
+                <div class="flex items-center gap-3">
+                  <i class="fab fa-twitter text-[#1DA1F2]"></i>
+                  <span class="text-sm">{{getSocialUsername(userProfile.socialLinks.twitter)}}</span>
+                </div>
+                <button (click)="connectSocial('twitter')" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400">
+                  Cambiar
+                </button>
+              </div>
+              <button *ngIf="!userProfile.socialLinks.twitter" (click)="connectSocial('twitter')" 
+                      class="w-full flex items-center gap-3 px-4 py-2 bg-[#1DA1F2] text-white rounded-lg hover:bg-[#1A91DA] transition-colors">
+                <i class="fab fa-twitter"></i>
+                <span>Conectar Twitter</span>
+              </button>
+              
+              <div *ngIf="userProfile.socialLinks.linkedin" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg dark:bg-gray-700/50">
+                <div class="flex items-center gap-3">
+                  <i class="fab fa-linkedin-in text-[#0077B5]"></i>
+                  <span class="text-sm">{{getSocialUsername(userProfile.socialLinks.linkedin)}}</span>
+                </div>
+                <button (click)="connectSocial('linkedin')" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400">
+                  Cambiar
+                </button>
+              </div>
+              <button *ngIf="!userProfile.socialLinks.linkedin" (click)="connectSocial('linkedin')" 
+                      class="w-full flex items-center gap-3 px-4 py-2 bg-[#0077B5] text-white rounded-lg hover:bg-[#00669C] transition-colors">
+                <i class="fab fa-linkedin-in"></i>
+                <span>Conectar LinkedIn</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Idea de negocio -->
+          <div *ngIf="datosRegistro.idea" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Mi Idea de Negocio</h2>
+            <p class="text-gray-600 dark:text-gray-300 whitespace-pre-line">
+              {{datosRegistro.idea}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal de Edición -->
+  <div *ngIf="showEditModal" class="fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <!-- Fondo oscuro -->
+      <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+      </div>
+      
+      <!-- Contenido del modal -->
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full dark:bg-gray-800">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 dark:bg-gray-800">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
+                Editar Perfil
+              </h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Columna 1: Datos personales -->
+                <div class="space-y-4">
+                  <h4 class="font-medium text-gray-800 dark:text-gray-200 border-b pb-2">Datos Personales</h4>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre</label>
+                    <input type="text" [(ngModel)]="editForm.nombre" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Apellidos</label>
+                    <input type="text" [(ngModel)]="editForm.apellidos" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Correo electrónico</label>
+                    <input type="email" [(ngModel)]="editForm.correo" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teléfono</label>
+                    <input type="tel" [(ngModel)]="editForm.telefono" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                </div>
+                
+                <!-- Columna 2: Datos profesionales -->
+                <div class="space-y-4">
+                  <h4 class="font-medium text-gray-800 dark:text-gray-200 border-b pb-2">Datos Profesionales</h4>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Empresa</label>
+                    <input type="text" [(ngModel)]="editForm.empresa" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rubro</label>
+                    <input type="text" [(ngModel)]="editForm.rubro" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título profesional</label>
+                    <input type="text" [(ngModel)]="editForm.title" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ubicación</label>
+                    <input type="text" [(ngModel)]="editForm.location" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                </div>
+                
+                <!-- Sección completa: Sobre mí -->
+                <div class="md:col-span-2">
+                  <h4 class="font-medium text-gray-800 dark:text-gray-200 border-b pb-2">Sobre mí</h4>
+                  <textarea [(ngModel)]="editForm.about" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                </div>
+                
+                <!-- Sección completa: Intereses y habilidades -->
+                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Intereses (separados por comas)</label>
+                    <input type="text" [(ngModel)]="editForm.interests" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Habilidades (separadas por comas)</label>
+                    <input type="text" [(ngModel)]="editForm.skills" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  </div>
+                </div>
+                
+                <!-- Sección completa: Educación -->
+                <div class="md:col-span-2">
+                  <h4 class="font-medium text-gray-800 dark:text-gray-200 border-b pb-2">Educación</h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Institución</label>
+                      <input type="text" [(ngModel)]="editForm.educationInstitution" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título/Carrera</label>
+                      <input type="text" [(ngModel)]="editForm.educationDegree" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Periodo</label>
+                      <input type="text" [(ngModel)]="editForm.educationPeriod" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                  </div>
+                  
+                  <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descripción</label>
+                    <textarea [(ngModel)]="editForm.educationDescription" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse dark:bg-gray-700">
+          <button (click)="saveProfile()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+            Guardar cambios
+          </button>
+          <button (click)="showEditModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500">
+            Cancelar
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
