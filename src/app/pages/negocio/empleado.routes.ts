@@ -18,8 +18,8 @@ export const empleadoRoutes: Routes = [
     },
     {
         path: 'perfil', component: PerfilUsuarioComponent
-    }
-  
+    },
+
   
  
 ]

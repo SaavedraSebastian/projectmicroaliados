@@ -37,5 +37,10 @@ export const routes: Routes = [
   path: 'email',
   canActivate: [AuthInverseGuard],
   loadChildren: () => import('./pages/mensajeria/mensajeria.routes').then(m => m.emailMarketing)},
+  {
+    path: '',
+    canActivate:[ AuthInverseGuard],
+    loadChildren: () => import('./pages/negocio/networking/networking.routes').then(m => m.networkingRoutes)
+  }
   
 ];
