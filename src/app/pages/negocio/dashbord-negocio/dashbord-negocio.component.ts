@@ -18,11 +18,15 @@ import { SidebarMessageComponent } from '../../../shared/components/sidebar-mess
   imports: [SidebarNegocioComponent, CommonModule, NgChartsModule, SidebarMessageComponent]
 })
 export class DashbordNegocioComponent implements OnInit, OnDestroy {
-  user: any = {
+  datosRegistro: any = {
     nombre: '',
+    apellidos: '',
     correo: '',
+    empresa: '',
+    rubro: '',
+    telefono: '',
     profileProgress: 0,
-    avatar: 'https://app.factiliza.com/assets/images/portrait/small/avatar-s-13.jpg'
+    avatar: 'https://app.factiliza.com/assets/images/portrait/small/avatar-s-13.jpg',
   };
 
   stats: Stats = {
@@ -40,56 +44,32 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
   
   private updateSubscription!: Subscription;
 
-  public barChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    indexAxis: 'y',
-    scales: {
-      x: {
-        max: 100,
-        grid: { display: false },
-        ticks: {
-          color: '#6B7280',
-          callback: (value: number | string) => value + '%'
-        },
-        title: {
-          display: true,
-          text: 'Progreso (%)',
-          color: '#6B7280',
-          font: { weight: 'bold' }
-        }
-      },
-      y: {
-        grid: { color: '#E5E7EB' },
-        ticks: {
-          color: '#6B7280'
-        }
-      }
+  
+public courseChartOptions: ChartConfiguration<'doughnut'>['options'] = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false
     },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: '#1F2937',
-        titleColor: '#F9FAFB',
-        bodyColor: '#F9FAFB',
-        borderColor: '#374151',
-        borderWidth: 1,
-        padding: 12,
-        callbacks: {
-          label: (context) => `${context.label}: ${context.raw}% completado`
-        }
-      }
+    tooltip: {
+      enabled: false
     }
-  };
-
+  },
+  elements: {
+    arc: {
+      borderWidth: 0 
+    }
+  }
+};
   public vistaActual: 'semanal' | 'total' = 'semanal';
 
   public rutaData: ChartConfiguration['data'] = {
     labels: ['Ideación', 'Validación', 'Propuesta de Valor', 'Prototipo', 'Lanzamiento'],
     datasets: [{
       data: [100, 75, 50, 25, 0],
-      backgroundColor: '#3B82F6',
-      hoverBackgroundColor: '#2563EB',
+      backgroundColor: '#10B981',
+      hoverBackgroundColor: '#059669',
       borderRadius: 6,
       borderSkipped: false
     }]
@@ -185,28 +165,46 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
   }
 
   private initializeUserData(): void {
-    const currentUser = this.authService.getCurrentUser();
+    // Obtener datos del localStorage directamente
+    const userData = JSON.parse(localStorage.getItem('registroUsuario') || '{}');
     
-    if (!currentUser) {
-      const defaultUser = {
-        nombre: "Sebastian Alonso",
-        apellidos: "Saavedra Arroyo",
-        correo: "ssaavedraa4@upao.edu.pe",
-        empresa: "HUB",
-        rubro: "Venta de frutas",
-        telefono: "924484100",
-        profileProgress: 75,
+    if (userData && userData.nombre) {
+      this.datosRegistro = {
+        nombre: userData.nombre,
+        apellidos: userData.apellidos || '',
+        correo: userData.correo || '',
+        empresa: userData.empresa || '',
+        rubro: userData.rubro || '',
+        telefono: userData.telefono || '',
+        profileProgress: this.calculateProfileProgress(userData),
+        avatar: userData.avatar || 'https://app.factiliza.com/assets/images/portrait/small/avatar-s-13.jpg'
+      };
+    } else {
+      this.datosRegistro = {
+        nombre: "",
+        apellidos: "",
+        correo: "",
+        empresa: "",
+        rubro: "",
+        telefono: "",
+        profileProgress: 0,
         avatar: 'https://app.factiliza.com/assets/images/portrait/small/avatar-s-13.jpg'
       };
-      
-      this.authService.initializeUser(defaultUser);
-      this.user = {...defaultUser};
-    } else {
-      this.user = {
-        ...currentUser,
-        profileProgress: this.authService.calculateProfileProgress(currentUser)
-      };
     }
+  }
+
+  private calculateProfileProgress(userData: any): number {
+    let progress = 0;
+    const fieldsToCheck = ['nombre', 'correo', 'empresa', 'rubro', 'telefono'];
+    const weightPerField = 100 / fieldsToCheck.length;
+
+    fieldsToCheck.forEach(field => {
+      if (userData[field] && userData[field].trim() !== '') {
+        progress += weightPerField;
+      }
+    });
+
+    return Math.round(progress);
   }
 
   private loadDashboardData(): void {
@@ -224,31 +222,31 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
         id: 1, 
         title: 'Marketing Digital', 
         icon: 'bullhorn', 
-        color: 'purple', 
+        color: 'emerald', 
         progress: 65, 
         lessonsCompleted: 13, 
         totalLessons: 20,
-        chartData: this.getCourseChartData(65, 'purple')
+        chartData: this.getCourseChartData(65, 'emerald')
       },
       { 
         id: 2, 
         title: 'Ventas Online', 
         icon: 'shopping-cart', 
-        color: 'blue', 
+        color: 'cyan', 
         progress: 30, 
         lessonsCompleted: 6, 
         totalLessons: 20,
-        chartData: this.getCourseChartData(30, 'blue')
+        chartData: this.getCourseChartData(30, 'cyan')
       },
       { 
         id: 3, 
         title: 'Branding Personal', 
         icon: 'palette', 
-        color: 'pink', 
+        color: 'violet', 
         progress: 85, 
         lessonsCompleted: 17, 
         totalLessons: 20,
-        chartData: this.getCourseChartData(85, 'pink')
+        chartData: this.getCourseChartData(85, 'violet')
       }
     ];
     
@@ -257,7 +255,7 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
         id: 1, 
         title: 'Nueva Actualización', 
         icon: 'sync', 
-        color: 'blue', 
+        color: 'emerald', 
         status: 'Nuevo', 
         date: 'Hace 2 horas', 
         description: 'Hemos lanzado nuevas funciones para mejorar tu experiencia.' 
@@ -266,7 +264,7 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
         id: 2, 
         title: 'Mantenimiento Programado', 
         icon: 'tools', 
-        color: 'orange', 
+        color: 'amber', 
         status: 'Importante', 
         date: 'Hace 1 día', 
         description: 'El sistema estará en mantenimiento el próximo viernes a las 2 AM.' 
@@ -278,7 +276,7 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
         id: 1, 
         name: 'Emprendedores Digitales', 
         icon: 'rocket', 
-        gradient: ['purple', 'indigo'], 
+        gradient: ['violet', 'indigo'], 
         members: 1243, 
         activity: 'hace 15 min', 
         online: 32,
@@ -288,7 +286,7 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
         id: 2, 
         name: 'Marketing Avanzado', 
         icon: 'chart-line', 
-        gradient: ['blue', 'cyan'], 
+        gradient: ['cyan', 'emerald'], 
         members: 876, 
         activity: 'hace 1 hora'
       }
@@ -309,20 +307,15 @@ export class DashbordNegocioComponent implements OnInit, OnDestroy {
 
   private getColorCode(colorName: string): string {
     const colors: {[key: string]: string} = {
-      'purple': '#8B5CF6',
-      'blue': '#3B82F6',
-      'pink': '#EC4899',
-      'red': '#EF4444',
-      'green': '#10B981',
-      'yellow': '#F59E0B',
-      'orange': '#F97316'
+      'emerald': '#10B981',
+      'cyan': '#06B6D4',
+      'violet': '#8B5CF6',
+      'amber': '#F59E0B',
+      'rose': '#F43F5E',
+      'indigo': '#6366F1',
+      'teal': '#14B8A6'
     };
-    return colors[colorName] || '#3B82F6';
-  }
-
-  private getRandomChange(base: number, range: number, min: number = 0): number {
-    const change = Math.floor(Math.random() * range * 2) - range;
-    return Math.max(min, base + change);
+    return colors[colorName] || '#10B981';
   }
 
   updateCourseProgress(courseId: number): void {

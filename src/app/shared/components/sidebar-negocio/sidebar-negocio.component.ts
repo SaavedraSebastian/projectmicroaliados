@@ -14,19 +14,27 @@ export class SidebarNegocioComponent {
 
   constructor(private router: Router) {}
 
-  menuItems = [
-    { path: '/dashboard/empleado', icon: 'home', title: 'Inicio' },
-    { path: '/dashboard/perfil', icon: 'user', title: 'Perfil' },
-    { path: '/asesorias/list', icon: 'boxes', title: 'Catálogo de Asesorías' },
-    { path: '/asesorias/campus/reunirse', icon: 'graduation-cap', title: 'Reunirse', badge: 3, badgeColor: 'red' },
-    { path: '/asesorias/list-total', icon: 'chalkboard-teacher', title: 'Mi Aula Virtual' },
-    { path: '/email/comunication', icon: 'envelope', title: 'Email Marketing' },
-    { path: '/validacion', icon: 'check-circle', title: 'Descubre' },
-    { path: '/dashboard/reporte', icon: 'chart-pie', title: 'Reportes' },
-    { path: '/email/campaigns', icon: 'bullhorn', title: 'Campañas', badge: 1, badgeColor: 'yellow' },
-    { path: '/configuracion', icon: 'cog', title: 'Configuración' }
-    
-  ];
+ menuItems = [
+  { path: '/dashboard/empleado', icon: 'th', title: 'Dashboard' },
+  { path: '/dashboard/perfil', icon: 'user', title: 'Mi Perfil' },
+  { path: '/asesorias/list', icon: 'lightbulb', title: 'Asesorías' },
+  { path: '/asesorias/campus/reunirse', icon: 'graduation-cap', title: 'Sesiones en Vivo', badge: 3, badgeColor: 'red' },
+  { path: '/asesorias/list-total', icon: 'chalkboard-teacher', title: 'Mi Aula Virtual' },
+  { divider: true },
+  { path: '/mentors', icon: 'user-tie', title: 'Mentores' },
+  { path: '/networking', icon: 'users', title: 'Red de Aliados' },
+  { path: '/email/comunication', icon: 'envelope', title: 'Email Marketing' },
+  { path: '/email/campaigns', icon: 'bullhorn', title: 'Campañas', badge: 1, badgeColor: 'yellow' },
+  { divider: true },
+  { path: '/calendario', icon: 'calendar', title: 'Calendario' },
+  { path: '/dashboard/reporte', icon: 'chart-line', title: 'Progreso y Resultados' },
+  { path: '/herramientas', icon: 'toolbox', title: 'Herramientas Útiles' },
+  { path: '/plantillas', icon: 'file-alt', title: 'Plantillas y Guías' },
+  { divider: true },
+  { path: '/configuracion', icon: 'cog', title: 'Configuración' },
+  { path: '/soporte', icon: 'life-ring', title: 'Soporte' }
+]
+
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;

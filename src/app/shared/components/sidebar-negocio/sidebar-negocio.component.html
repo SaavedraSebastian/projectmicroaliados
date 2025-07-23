@@ -1,9 +1,9 @@
-<!-- Sidebar -->
+
 <div
   class="fixed inset-y-0 left-0 z-30 w-64 flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out transform -translate-x-full md:translate-x-0"
   [class.translate-x-0]="sidebarOpen"
 >
-  <!-- Header -->
+
   <header class="px-4 py-4 border-b border-gray-200 dark:border-gray-700">
     <div class="flex items-center space-x-2">
       <div class="w-8 h-8 flex items-center justify-center rounded-md bg-black dark:bg-blue-500">
@@ -13,27 +13,31 @@
     </div>
   </header>
 
-  <nav class="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
-    <ng-container *ngFor="let item of menuItems">
+  <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+    <ng-container *ngFor="let item of menuItems; let i = index">
+      
+      <div *ngIf="item.divider" class="my-3 border-t border-gray-300 dark:border-gray-600"></div>
+
       <a
+        *ngIf="!item.divider"
         [routerLink]="item.path"
-        routerLinkActive="active text-blue-600 dark:text-blue-400"
-        class="flex items-center px-3 py-2.5 rounded-md mx-1 transition-colors duration-150 hover:bg-gray-100 dark:hover:bg-gray-800"
+        routerLinkActive="bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400"
+        class="flex items-center px-3 py-2 rounded-md transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800 group"
         (click)="closeSidebar()"
       >
-        <div class="w-6 h-6 flex items-center justify-center mr-2 text-gray-600 dark:text-gray-400">
-          <i class="fas fa-{{item.icon}} text-sm"></i>
+        <div class="w-5 mr-3 text-gray-500 dark:text-gray-400 group-hover:text-blue-500">
+          <i class="fas fa-{{item.icon}} text-base"></i>
         </div>
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600">
           {{ item.title }}
         </span>
         <span
           *ngIf="item.badge"
-          class="ml-auto text-xs font-medium px-1.5 py-0.5 rounded-full"
+          class="ml-auto text-xs font-semibold px-2 py-0.5 rounded-full"
           [ngClass]="{
             'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300': item.badgeColor === 'red',
-            'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300': item.badgeColor === 'green',
-            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300': item.badgeColor === 'yellow'
+            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300': item.badgeColor === 'yellow',
+            'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300': item.badgeColor === 'green'
           }"
         >
           {{ item.badge }}
@@ -41,13 +45,12 @@
       </a>
     </ng-container>
   </nav>
-
-  <footer class="p-3 border-t border-gray-200 dark:border-gray-700 mt-auto">
+  <footer class="p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
     <button
       (click)="logout()"
-      class="flex items-center justify-center w-full py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+      class="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
     >
-      <i class="fas fa-sign-out-alt mr-2"></i>
+      <i class="fas fa-sign-out-alt mr-2 text-base"></i>
       Cerrar sesión
     </button>
   </footer>

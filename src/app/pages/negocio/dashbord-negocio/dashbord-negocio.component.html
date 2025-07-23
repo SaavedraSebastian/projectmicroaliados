@@ -4,117 +4,147 @@
   
   <!-- Main Content -->
   <main class="flex-1 p-4 md:p-6 lg:ml-64">
-    <!-- Welcome Header - Ajustado para móviles -->
-    <div class="mb-4 md:mb-6 slide-in" style="--delay: 0">
-      <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 p-4 sm:p-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700">
+    <div class="mb-6 slide-in" style="--delay: 0">
+      <div class="flex flex-col sm:flex-row items-center gap-4 p-6 bg-white rounded-2xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
         <div class="relative flex-shrink-0">
-          <img [src]="'https://app.factiliza.com/assets/images/portrait/small/avatar-s-13.jpg'" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white shadow-md">
-          <span class="absolute bottom-0 right-0 w-3 h-3 sm:w-4 sm:h-4 bg-green-400 border-2 border-white rounded-full"></span>
+          <img [src]="datosRegistro.avatar" 
+               class="w-16 h-16 rounded-full border-2 border-white shadow-md object-cover">
+          <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-400 border-2 border-white rounded-full"></span>
         </div>
-        <div class="flex-1 text-center sm:text-left w-full sm:w-auto">
-          <h1 class="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white">Bienvenido, {{user.nombre.split(' ')[0]}}</h1>
-          <div class="flex items-center justify-center sm:justify-start gap-2 mt-1">
-            <div class="w-32 sm:w-48 h-2 bg-gray-100 rounded-full dark:bg-gray-700">
-              <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" 
-                   [style.width]="user.profileProgress + '%'"></div>
+        <div class="flex-1 text-center sm:text-left">
+          <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+            ¡Bienvenido{{datosRegistro.nombre ? ', ' + datosRegistro.nombre.split(' ')[0] : ''}}!
+          </h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {{datosRegistro.empresa}} • {{datosRegistro.rubro}}
+          </p>
+          <div class="flex items-center justify-center sm:justify-start gap-3 mt-3">
+            <div class="w-48 h-2 bg-gray-100 rounded-full dark:bg-gray-700">
+              <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full" 
+                   [style.width]="datosRegistro.profileProgress + '%'"></div>
             </div>
-            <span class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{user.profileProgress}}% completado</span>
+            <span class="text-sm text-gray-600 dark:text-gray-300">{{datosRegistro.profileProgress}}% completado</span>
           </div>
         </div>
-        <div class="flex gap-2 ml-auto sm:ml-0">
-          <button class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 relative">
-            <i class="fas fa-bell text-sm sm:text-base text-gray-500 dark:text-gray-300"></i>
-            <span class="absolute top-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-red-500 rounded-full animate-ping"></span>
-            <span class="absolute top-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-red-500 rounded-full"></span>
+        <div class="flex gap-2">
+          <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 relative">
+            <i class="fas fa-bell text-gray-600 dark:text-gray-300"></i>
+            <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 rounded-full animate-pulse"></span>
           </button>
-          <button class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600">
-            <i class="fas fa-cog text-sm sm:text-base text-gray-500 dark:text-gray-300"></i>
+          <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600">
+            <i class="fas fa-cog text-gray-600 dark:text-gray-300"></i>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Stats Cards - Ajuste para móviles -->
-    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+    <!-- Stats Cards - Rediseñadas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <!-- Sales Today -->
-      <div class="card-hover bg-white/90 backdrop-blur-sm p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700 fade-in" style="--delay: 1">
+      <div class="bg-white p-5 rounded-xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700 hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Ventas Hoy</p>
-            <h3 class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white mt-1">${{stats.salesToday | number}}</h3>
-            <p class="text-xs text-green-500 mt-1 flex items-center">
-              <i class="fas fa-arrow-up mr-1"></i> 12% desde ayer
+            <p class="text-sm text-gray-500 dark:text-gray-400">Ventas Hoy</p>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">${{stats.salesToday | number}}</h3>
+            <p class="text-xs text-emerald-500 mt-2 flex items-center">
+              <i class="fas fa-arrow-up mr-1.5"></i> 12% desde ayer
             </p>
           </div>
-          <div class="w-8 h-8 sm:w-12 sm:h-12 bg-blue-100/50 rounded-full flex items-center justify-center dark:bg-blue-900/30">
-            <i class="fas fa-shopping-cart text-blue-600 dark:text-blue-400 text-sm sm:text-base"></i>
+          <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center dark:bg-emerald-900/20">
+            <i class="fas fa-shopping-cart text-emerald-600 dark:text-emerald-400"></i>
           </div>
         </div>
       </div>
 
       <!-- Visitors Today -->
-      <div class="card-hover bg-white/90 backdrop-blur-sm p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700 fade-in" style="--delay: 2">
+      <div class="bg-white p-5 rounded-xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700 hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Visitas</p>
-            <h3 class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white mt-1">{{stats.visitorsToday | number}}</h3>
-            <p class="text-xs text-green-500 mt-1 flex items-center">
-              <i class="fas fa-arrow-up mr-1"></i> 24% desde ayer
+            <p class="text-sm text-gray-500 dark:text-gray-400">Visitas Hoy</p>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">{{stats.visitorsToday | number}}</h3>
+            <p class="text-xs text-emerald-500 mt-2 flex items-center">
+              <i class="fas fa-arrow-up mr-1.5"></i> 24% desde ayer
             </p>
           </div>
-          <div class="w-8 h-8 sm:w-12 sm:h-12 bg-purple-100/50 rounded-full flex items-center justify-center dark:bg-purple-900/30">
-            <i class="fas fa-users text-purple-600 dark:text-purple-400 text-sm sm:text-base"></i>
+          <div class="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center dark:bg-cyan-900/20">
+            <i class="fas fa-users text-cyan-600 dark:text-cyan-400"></i>
           </div>
         </div>
       </div>
 
       <!-- Conversion Rate -->
-      <div class="card-hover bg-white/90 backdrop-blur-sm p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700 fade-in" style="--delay: 3">
+      <div class="bg-white p-5 rounded-xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700 hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Conversión</p>
-            <h3 class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white mt-1">{{stats.conversionRate}}%</h3>
-            <p class="text-xs text-red-500 mt-1 flex items-center">
-              <i class="fas fa-arrow-down mr-1"></i> 0.5% desde ayer
+            <p class="text-sm text-gray-500 dark:text-gray-400">Tasa Conversión</p>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">{{stats.conversionRate}}%</h3>
+            <p class="text-xs text-rose-500 mt-2 flex items-center">
+              <i class="fas fa-arrow-down mr-1.5"></i> 0.5% desde ayer
             </p>
           </div>
-          <div class="w-8 h-8 sm:w-12 sm:h-12 bg-green-100/50 rounded-full flex items-center justify-center dark:bg-green-900/30">
-            <i class="fas fa-percentage text-green-600 dark:text-green-400 text-sm sm:text-base"></i>
+          <div class="w-12 h-12 bg-violet-50 rounded-full flex items-center justify-center dark:bg-violet-900/20">
+            <i class="fas fa-percentage text-violet-600 dark:text-violet-400"></i>
           </div>
         </div>
       </div>
 
       <!-- New Customers -->
-      <div class="card-hover bg-white/90 backdrop-blur-sm p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700 fade-in" style="--delay: 4">
+      <div class="bg-white p-5 rounded-xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700 hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Clientes Nuevos</p>
-            <h3 class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white mt-1">{{stats.newCustomers}}</h3>
-            <p class="text-xs text-green-500 mt-1 flex items-center">
-              <i class="fas fa-arrow-up mr-1"></i> 8 desde ayer
+            <p class="text-sm text-gray-500 dark:text-gray-400">Clientes Nuevos</p>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">{{stats.newCustomers}}</h3>
+            <p class="text-xs text-emerald-500 mt-2 flex items-center">
+              <i class="fas fa-arrow-up mr-1.5"></i> 8 desde ayer
             </p>
           </div>
-          <div class="w-8 h-8 sm:w-12 sm:h-12 bg-orange-100/50 rounded-full flex items-center justify-center dark:bg-orange-900/30">
-            <i class="fas fa-user-plus text-orange-600 dark:text-orange-400 text-sm sm:text-base"></i>
+          <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center dark:bg-amber-900/20">
+            <i class="fas fa-user-plus text-amber-600 dark:text-amber-400"></i>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Charts Section - Ajuste para móviles -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-      <!-- Sales Chart -->
-      <div class="card-hover bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700 fade-in" style="--delay: 5">
-        <div class="flex items-center justify-between mb-4 sm:mb-5">
+    <!-- Charts Section - Mejorado -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <!-- Ruta Emprendedora -->
+      <div class="bg-white p-6 rounded-xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <div class="flex items-center justify-between mb-5">
           <div>
-            <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">Tu Ruta Emprendedora</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
-              Avance estimado en cada etapa
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Tu Ruta Emprendedora</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Progreso en cada etapa de tu negocio
             </p>
+          </div>
+          <div class="flex gap-2">
+            <button (click)="vistaActual = 'semanal'" 
+                    class="px-3 py-1 text-xs rounded-lg transition-colors"
+                    [class.bg-emerald-100]="vistaActual === 'semanal'"
+                    [class.text-emerald-700]="vistaActual === 'semanal'"
+                    [class.dark:bg-emerald-900]="vistaActual === 'semanal'"
+                    [class.dark:text-emerald-300]="vistaActual === 'semanal'"
+                    [class.bg-gray-100]="vistaActual !== 'semanal'"
+                    [class.text-gray-600]="vistaActual !== 'semanal'"
+                    [class.dark:bg-gray-700]="vistaActual !== 'semanal'"
+                    [class.dark:text-gray-300]="vistaActual !== 'semanal'">
+              Semanal
+            </button>
+            <button (click)="vistaActual = 'total'" 
+                    class="px-3 py-1 text-xs rounded-lg transition-colors"
+                    [class.bg-emerald-100]="vistaActual === 'total'"
+                    [class.text-emerald-700]="vistaActual === 'total'"
+                    [class.dark:bg-emerald-900]="vistaActual === 'total'"
+                    [class.dark:text-emerald-300]="vistaActual === 'total'"
+                    [class.bg-gray-100]="vistaActual !== 'total'"
+                    [class.text-gray-600]="vistaActual !== 'total'"
+                    [class.dark:bg-gray-700]="vistaActual !== 'total'"
+                    [class.dark:text-gray-300]="vistaActual !== 'total'">
+              Total
+            </button>
           </div>
         </div>
 
-        <div class="chart-container h-48 sm:h-64">
+        <div class="chart-container h-64">
           <canvas baseChart
             [data]="rutaData"
             [options]="rutaOptions"
@@ -124,88 +154,83 @@
       </div>
       
       <!-- Courses Progress -->
-      <div class="card-hover bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700 fade-in" style="--delay: 6">
-        <div class="flex items-center justify-between mb-4 sm:mb-5">
+      <div class="bg-white p-6 rounded-xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <div class="flex items-center justify-between mb-5">
           <div>
-            <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">Mis Cursos</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">Progreso de aprendizaje</p>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Mis Cursos</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Tu progreso de aprendizaje</p>
           </div>
-          <a routerLink="/cursos" class="text-blue-600 text-xs sm:text-sm font-medium hover:text-blue-700 flex items-center gap-1 dark:text-blue-400 dark:hover:text-blue-300">
+          <a routerLink="/cursos" class="text-emerald-600 text-sm font-medium hover:text-emerald-700 flex items-center gap-1.5 dark:text-emerald-400 dark:hover:text-emerald-300">
             Ver todos
             <i class="fas fa-chevron-right text-xs"></i>
           </a>
         </div>
         
-        <div class="space-y-3 sm:space-y-4">
+        <div class="space-y-4">
           <div *ngFor="let course of courses" 
-               class="flex items-center gap-3 sm:gap-4 p-2 sm:p-3 bg-white rounded-lg border border-gray-100 hover:border-{{course.color}}-100 transition-all group dark:bg-gray-700/50 dark:border-gray-600 dark:hover:border-{{course.color}}-500/30">
-            <div class="relative w-10 h-10 sm:w-12 sm:h-12">
+               class="flex items-center gap-4 p-3 bg-white rounded-lg border border-gray-100 hover:border-emerald-100 transition-all group dark:bg-gray-700/50 dark:border-gray-600 dark:hover:border-emerald-500/30">
+            <div class="relative w-12 h-12">
               <canvas baseChart
                 [data]="course.chartData"
-                [options]="{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  cutout: '80%',
-                  plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                  }
-                }"
+                [options]="courseChartOptions"
                 type="doughnut"
-                width="40"
-                height="40">
+                width="48"
+                height="48">
               </canvas>
               <div class="absolute inset-0 flex items-center justify-center">
-                <i class="fas fa-{{course.icon}} text-{{course.color}}-600 dark:text-{{course.color}}-400 text-xs sm:text-sm"></i>
+                <i class="fas fa-{{course.icon}} text-{{course.color}}-600 dark:text-{{course.color}}-400 text-sm"></i>
               </div>
             </div>
             <div class="flex-1 min-w-0">
-              <h4 class="text-xs sm:text-sm font-semibold text-gray-800 dark:text-white mb-1 truncate">{{course.title}}</h4>
-              <div class="w-full h-1 sm:h-1.5 bg-gray-100 rounded-full mt-1 sm:mt-2 dark:bg-gray-700">
+              <h4 class="text-sm font-semibold text-gray-800 dark:text-white mb-1 truncate">{{course.title}}</h4>
+              <div class="w-full h-1.5 bg-gray-100 rounded-full mt-2 dark:bg-gray-700">
                 <div class="h-full bg-{{course.color}}-500 rounded-full" 
                      [style.width]="course.progress + '%'"></div>
               </div>
-              <p class="text-xxs sm:text-xs text-gray-500 mt-1 dark:text-gray-400 truncate">{{course.lessonsCompleted}}/{{course.totalLessons}} lecciones completadas</p>
+              <p class="text-xs text-gray-500 mt-1.5 dark:text-gray-400 truncate">
+                {{course.lessonsCompleted}} de {{course.totalLessons}} lecciones
+              </p>
             </div>
-            <button class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-{{course.color}}-100 text-{{course.color}}-600 hover:bg-{{course.color}}-200 transition-colors dark:bg-{{course.color}}-900/30 dark:text-{{course.color}}-400 dark:hover:bg-{{course.color}}-900/50"
+            <button class="w-8 h-8 flex items-center justify-center rounded-full bg-{{course.color}}-100 text-{{course.color}}-600 hover:bg-{{course.color}}-200 transition-colors dark:bg-{{course.color}}-900/30 dark:text-{{course.color}}-400 dark:hover:bg-{{course.color}}-900/50"
                     (click)="updateCourseProgress(course.id)">
-              <i class="fas fa-play text-xxs sm:text-xs"></i>
+              <i class="fas fa-play text-xs"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
-    <!-- Bottom Section - Ajuste para móviles -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+
+    <!-- Bottom Section - Rediseñada -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Announcements -->
-      <div class="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700 slide-in" style="--delay: 7">
-        <div class="flex items-center justify-between mb-4 sm:mb-5">
-          <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">Últimos Anuncios</h3>
-          <a href="#" class="text-blue-600 text-xs sm:text-sm font-medium hover:text-blue-700 flex items-center gap-1 dark:text-blue-400 dark:hover:text-blue-300">
+      <div class="bg-white p-6 rounded-xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Últimos Anuncios</h3>
+          <a href="#" class="text-emerald-600 text-sm font-medium hover:text-emerald-700 flex items-center gap-1.5 dark:text-emerald-400 dark:hover:text-emerald-300">
             Ver todos
             <i class="fas fa-chevron-right text-xs"></i>
           </a>
         </div>
-        <div class="space-y-3 sm:space-y-5">
+        <div class="space-y-4">
           <div *ngFor="let announcement of announcements" 
-               class="group p-3 sm:p-4 bg-white rounded-lg border border-gray-100 hover:border-{{announcement.color}}-100 transition-all dark:bg-gray-700/50 dark:border-gray-600 dark:hover:border-{{announcement.color}}-400/30">
-            <div class="flex items-start gap-2 sm:gap-3">
-              <div class="w-7 h-7 sm:w-8 sm:h-8 bg-{{announcement.color}}-100/50 rounded-full flex items-center justify-center shrink-0 dark:bg-{{announcement.color}}-900/30">
-                <i class="fas fa-{{announcement.icon}} text-{{announcement.color}}-600 text-xs sm:text-sm dark:text-{{announcement.color}}-400"></i>
+               class="group p-4 bg-white rounded-lg border border-gray-100 hover:border-{{announcement.color}}-100 transition-all dark:bg-gray-700/50 dark:border-gray-600 dark:hover:border-{{announcement.color}}-400/30">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-{{announcement.color}}-100/50 rounded-full flex items-center justify-center shrink-0 dark:bg-{{announcement.color}}-900/30">
+                <i class="fas fa-{{announcement.icon}} text-{{announcement.color}}-600 text-sm dark:text-{{announcement.color}}-400"></i>
               </div>
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1 sm:gap-2 mb-1">
-                  <span class="text-xs sm:text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{{announcement.title}}</span>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{{announcement.title}}</span>
                   <span *ngIf="announcement.status" 
-                        class="text-xxs sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 bg-{{announcement.color}}-100 text-{{announcement.color}}-600 rounded-full dark:bg-{{announcement.color}}-900/30 dark:text-{{announcement.color}}-300">
+                        class="text-xs px-2 py-1 bg-{{announcement.color}}-100 text-{{announcement.color}}-600 rounded-full dark:bg-{{announcement.color}}-900/30 dark:text-{{announcement.color}}-300">
                     {{announcement.status}}
                   </span>
                 </div>
-                <p class="text-xxs sm:text-xs text-gray-500 mb-1 sm:mb-2 dark:text-gray-400">Publicado: {{announcement.date}}</p>
-                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{{announcement.description}}</p>
-                <button class="mt-1 sm:mt-2 text-blue-600 text-xxs sm:text-xs font-medium hover:text-blue-700 flex items-center gap-1 dark:text-blue-400 dark:hover:text-blue-300">
+                <p class="text-xs text-gray-500 mb-2 dark:text-gray-400">Publicado: {{announcement.date}}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{{announcement.description}}</p>
+                <button class="mt-2 text-emerald-600 text-xs font-medium hover:text-emerald-700 flex items-center gap-1 dark:text-emerald-400 dark:hover:text-emerald-300">
                   Ver detalles
-                  <i class="fas fa-external-link-alt text-[8px] sm:text-[10px]"></i>
+                  <i class="fas fa-external-link-alt text-[10px]"></i>
                 </button>
               </div>
             </div>
@@ -214,47 +239,47 @@
       </div>
 
       <!-- Groups -->
-      <div class="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-800/90 dark:border-gray-700 slide-in" style="--delay: 8">
-        <div class="flex items-center justify-between mb-4 sm:mb-5">
+      <div class="bg-white p-6 rounded-xl shadow-xs border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <div class="flex items-center justify-between mb-5">
           <div>
-            <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-1">Comunidades Activas</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">Grupos de tu interés</p>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-1">Comunidades Activas</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Grupos de tu interés</p>
           </div>
-          <a routerLink="/grupos" class="text-blue-600 text-xs sm:text-sm font-medium hover:text-blue-700 flex items-center gap-1 sm:gap-2 dark:text-blue-400 dark:hover:text-blue-300">
+          <a routerLink="/grupos" class="text-emerald-600 text-sm font-medium hover:text-emerald-700 flex items-center gap-1.5 dark:text-emerald-400 dark:hover:text-emerald-300">
             Explorar
             <i class="fas fa-arrow-right text-xs"></i>
           </a>
         </div>
 
-        <div class="space-y-3 sm:space-y-4">
+        <div class="space-y-4">
           <div *ngFor="let group of groups" 
-               class="group p-3 sm:p-4 bg-white rounded-lg border border-gray-100 hover:border-{{group.gradient[0]}}-100 transition-all dark:bg-gray-700/50 dark:border-gray-600 dark:hover:border-{{group.gradient[0]}}-400/30 hover:shadow-md">
-            <div class="flex items-start gap-3 sm:gap-4">
-              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-{{group.gradient[0]}}-100 to-{{group.gradient[1]}}-100 rounded-lg sm:rounded-xl flex items-center justify-center dark:from-{{group.gradient[0]}}-900/30 dark:to-{{group.gradient[1]}}-900/30">
-                <i class="fas fa-{{group.icon}} text-{{group.gradient[0]}}-600 dark:text-{{group.gradient[0]}}-400 text-sm"></i>
+               class="group p-4 bg-white rounded-lg border border-gray-100 hover:border-{{group.gradient[0]}}-100 transition-all dark:bg-gray-700/50 dark:border-gray-600 dark:hover:border-{{group.gradient[0]}}-400/30 hover:shadow-sm">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-gradient-to-br from-{{group.gradient[0]}}-100 to-{{group.gradient[1]}}-100 rounded-xl flex items-center justify-center dark:from-{{group.gradient[0]}}-900/30 dark:to-{{group.gradient[1]}}-900/30">
+                <i class="fas fa-{{group.icon}} text-{{group.gradient[0]}}-600 dark:text-{{group.gradient[0]}}-400 text-base"></i>
               </div>
               <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between mb-1 sm:mb-2">
-                  <h4 class="text-xs sm:text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{{group.name}}</h4>
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{{group.name}}</h4>
                   <span *ngIf="group.newMembers" 
-                        class="text-xxs sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 bg-green-100 text-green-600 rounded-full dark:bg-green-900/30 dark:text-green-300 animate-pulse">
+                        class="text-xs px-2 py-1 bg-emerald-100 text-emerald-600 rounded-full dark:bg-emerald-900/30 dark:text-emerald-300 animate-pulse">
                     {{group.newMembers}} nuevos
                   </span>
                   <span *ngIf="group.online" 
-                        class="text-xxs sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-100 text-blue-600 rounded-full dark:bg-blue-900/30 dark:text-blue-300">
+                        class="text-xs px-2 py-1 bg-cyan-100 text-cyan-600 rounded-full dark:bg-cyan-900/30 dark:text-cyan-300">
                     {{group.online}} en línea
                   </span>
                 </div>
-                <p class="text-xxs sm:text-xs text-gray-500 mb-2 sm:mb-3 dark:text-gray-400 truncate">{{group.members}} miembros · Última actividad: {{group.activity}}</p>
-                <div class="flex items-center gap-2 sm:gap-3">
+                <p class="text-xs text-gray-500 mb-3 dark:text-gray-400 truncate">{{group.members}} miembros · Última actividad: {{group.activity}}</p>
+                <div class="flex items-center gap-3">
                   <button 
                     (click)="handleGroupAction(group, 'join')"
-                    class="text-xxs sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 bg-blue-600 text-white rounded-md sm:rounded-lg hover:bg-{{group.gradient[0]}}-700 transition-colors dark:bg-{{group.gradient[0]}}-500 dark:hover:bg-{{group.gradient[0]}}-600 active:scale-95 transform transition-transform">
+                    class="text-xs px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors dark:bg-emerald-500 dark:hover:bg-emerald-600 active:scale-95">
                     {{group.newMembers ? 'Unirse' : 'Participar'}}
                   </button>
                   <button 
                     (click)="handleGroupAction(group, 'view')"
-                    class="text-xxs sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 border border-{{group.gradient[0]}}-600 text-{{group.gradient[0]}}-600 rounded-md sm:rounded-lg hover:bg-{{group.gradient[0]}}-50 transition-colors dark:border-{{group.gradient[0]}}-500 dark:text-{{group.gradient[0]}}-400 dark:hover:bg-{{group.gradient[0]}}-900/20 active:scale-95 transform transition-transform">
+                    class="text-xs px-3 py-1.5 border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 transition-colors dark:border-emerald-500 dark:text-emerald-400 dark:hover:bg-emerald-900/20 active:scale-95">
                     {{group.newMembers ? 'Ver grupo' : 'Ver discusiones'}}
                   </button>
                 </div>

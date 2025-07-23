@@ -16,7 +16,6 @@ export class PerfilUsuarioComponent implements OnInit {
   profileImage = 'assets/images/default-profile.jpg';
   coverImage = 'assets/images/default-cover.jpg';
 
-  // Datos de registro del usuario
   datosRegistro: any = {
     nombre: '',
     apellidos: '',
@@ -27,8 +26,6 @@ export class PerfilUsuarioComponent implements OnInit {
     idea: '',
     contrasena: ''
   };
-
-  // Perfil profesional complementario
   userProfile = {
     title: '',
     location: '',
@@ -48,16 +45,11 @@ export class PerfilUsuarioComponent implements OnInit {
       linkedin: ''
     }
   };
-
-  // Formulario de edición
   editForm = {
-    // Datos personales
     nombre: '',
     apellidos: '',
     correo: '',
     telefono: '',
-    
-    // Datos profesionales
     empresa: '',
     rubro: '',
     title: '',
@@ -65,8 +57,6 @@ export class PerfilUsuarioComponent implements OnInit {
     about: '',
     interests: '',
     skills: '',
-    
-    // Educación
     educationInstitution: '',
     educationDegree: '',
     educationPeriod: '',
@@ -84,21 +74,20 @@ export class PerfilUsuarioComponent implements OnInit {
     this.loadUserData();
   }
 
-  // Carga los datos combinados del registro y perfil
+
   loadUserData(): void {
-    // Cargar datos de registro desde localStorage
     const savedRegistro = localStorage.getItem('userRegisterData');
     if (savedRegistro) {
       this.datosRegistro = JSON.parse(savedRegistro);
     }
 
-    // Cargar datos de perfil profesional desde localStorage
+   
     const savedProfile = localStorage.getItem('userProfile');
     if (savedProfile) {
       this.userProfile = JSON.parse(savedProfile);
     }
 
-    // Cargar imágenes
+  
     const savedProfileImage = localStorage.getItem('profileImage');
     const savedCoverImage = localStorage.getItem('coverImage');
     
@@ -190,6 +179,7 @@ export class PerfilUsuarioComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+  
   getSocialUsername(url: string): string {
     if (!url) return '';
     
