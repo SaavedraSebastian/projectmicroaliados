@@ -364,7 +364,7 @@ export class CampaniaComponent implements OnInit {
   updateSelectedColor(): void {
     const selected = this.templates.find(t => t.id === this.currentTemplate);
     if (selected) {
-      // Extraer el color principal del gradiente (simplificado)
+      
       const gradientColors = selected.gradient.match(/#[a-fA-F0-9]{6}/g);
       if (gradientColors && gradientColors.length > 0) {
         this.selectedSecondaryColor = gradientColors[1] || gradientColors[0];
@@ -372,7 +372,7 @@ export class CampaniaComponent implements OnInit {
     }
   }
 
-  // Funciones del editor
+
   setActiveEditorTab(tabId: string) {
     this.activeEditorTab = tabId;
   }
